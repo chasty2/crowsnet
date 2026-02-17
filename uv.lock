@@ -61,6 +61,7 @@ dependencies = [
     { name = "molecule" },
     { name = "molecule-plugins", extra = ["vagrant"] },
     { name = "pulumi" },
+    { name = "pulumi-proxmoxve" },
 ]
 
 [package.metadata]
@@ -71,6 +72,7 @@ requires-dist = [
     { name = "molecule", specifier = ">=25.5.0" },
     { name = "molecule-plugins", extras = ["vagrant"], specifier = ">=25.8.12" },
     { name = "pulumi", specifier = ">=3.220.0" },
+    { name = "pulumi-proxmoxve", specifier = ">=7.13.0" },
 ]
 
 [[package]]
@@ -96,6 +98,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5c/27/f04e69b710efbfde20cfdcdb8eec3b3b1d4b6d480a80afa803386304e829/ansible_lint-25.6.1.tar.gz", hash = "sha256:6a1dd2b7a9f3f202c9e92a6c80296ff33ca863348c3acf978f80fb0d4536dce4", size = 559349, upload-time = "2025-06-19T07:34:23.206Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ea/1d/8e4972bc37bc6a2ac87a687076775e631350dd05c3d0517f88e0c46176a6/ansible_lint-25.6.1-py3-none-any.whl", hash = "sha256:69fe294a3cc30d8819b5a30625a7e25225f48558cadb83ad3d4dec597c1b8c2c", size = 316902, upload-time = "2025-06-19T07:34:21.1Z" },
+]
+
+[[package]]
+name = "arpeggio"
+version = "2.0.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/3b/58/ba011f3cf8291804ce80f9d81289ac15f0319a27f9d7e3c124aa5e4981cc/Arpeggio-2.0.3.tar.gz", hash = "sha256:9e85ad35cfc6c938676817c7ae9a1000a7c72a34c71db0c687136c460d12b85e", size = 766566, upload-time = "2025-09-12T12:45:20.594Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/84/4d/53b8186b41842f7a5e971b1d1c28e678364dcf841e4170f5d14d38ac1e2a/Arpeggio-2.0.3-py2.py3-none-any.whl", hash = "sha256:9374d9c531b62018b787635f37fd81c9a6ee69ef2d28c5db3cd18791b1f7db2f", size = 54656, upload-time = "2025-09-12T12:45:17.971Z" },
 ]
 
 [[package]]
@@ -502,6 +513,19 @@ wheels = [
 ]
 
 [[package]]
+name = "parver"
+version = "0.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "arpeggio" },
+    { name = "attrs" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/cc/e5/1c774688a90f0b76e872e30f6f1ba3f5e14056cd0d96a684047d4a986226/parver-0.5.tar.gz", hash = "sha256:b9fde1e6bb9ce9f07e08e9c4bea8d8825c5e78e18a0052d02e02bf9517eb4777", size = 26908, upload-time = "2023-10-03T21:06:54.506Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0f/4c/f98024021bef4d44dce3613feebd702c7ad8883f777ff8488384c59e9774/parver-0.5-py3-none-any.whl", hash = "sha256:2281b187276c8e8e3c15634f62287b2fb6fe0efe3010f739a6bd1e45fa2bf2b2", size = 15172, upload-time = "2023-10-03T21:06:52.796Z" },
+]
+
+[[package]]
 name = "pathspec"
 version = "0.12.1"
 source = { registry = "https://pypi.org/simple" }
@@ -567,6 +591,20 @@ dependencies = [
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a0/21/80a96ebd2d3802031d49e897f0f659b74aba6aec107b10332041c3c858d6/pulumi-3.220.0-py3-none-any.whl", hash = "sha256:962bd3ffc3b3546bad085f3c49a7f096dc8dd6c8426e220d87a7746be1314e0f", size = 390326, upload-time = "2026-02-10T17:12:29.301Z" },
+]
+
+[[package]]
+name = "pulumi-proxmoxve"
+version = "7.13.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "parver" },
+    { name = "pulumi" },
+    { name = "semver" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1f/1b/57fe8b147cc69f67960a0f8bd8269c108bd51d6681b395ae0d9a277728bf/pulumi_proxmoxve-7.13.0.tar.gz", hash = "sha256:e6316512856d61342a548b9f6a35ae8d6788752f4ccc120abd01a8841fbc0126", size = 263443, upload-time = "2026-02-10T16:47:32.681Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/81/33/3b08ba3c0d8979efe5594728ba186f95218481dc2dc23854dee4dbb23acd/pulumi_proxmoxve-7.13.0-py3-none-any.whl", hash = "sha256:be17c8add3bd2f0e31ce5a404758faba839572169bf6d727afffa9814f5f8eac", size = 404939, upload-time = "2026-02-10T16:47:31.305Z" },
 ]
 
 [[package]]
