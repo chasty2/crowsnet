@@ -7,7 +7,11 @@ ansible/hosts
 .ansible
 .claude
 __pycache__/
-*.egg-info/
+
+## Pulumi
+*.pyc
+venv/
+Pulumi.yaml
 
 # Terraform
 **/.terraform/
