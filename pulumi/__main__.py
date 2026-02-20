@@ -1,4 +1,4 @@
-"""A Python Pulumi program"""
+"""Provision CrowsNet virtual machines"""
 
 import pulumi
 from pulumi_proxmoxve import Provider
@@ -29,6 +29,9 @@ PROD_VMS = [
 ]
 
 stack = pulumi.get_stack()
+if stack not in ("stage", "prod"):
+    raise ValueError(f"Unknown stack '{stack}'. Expected 'stage' or 'prod'.")
+
 vms = STAGE_VMS if stack == "stage" else PROD_VMS
 
 for vm in vms:

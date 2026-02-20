@@ -18,7 +18,7 @@ class ProxmoxVM(pulumi.ComponentResource):
         mac: str,
         clone: bool,
         template: str,
-        opts: pulumi.ResourceOptions = None,
+        opts: pulumi.ResourceOptions | None = None,
     ):
         super().__init__("crowsnet:proxmox:VM", name, None, opts)
 
