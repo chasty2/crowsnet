@@ -1,9 +1,9 @@
 """A Python Pulumi program"""
 
 import pulumi
-import pulumi_proxmoxve as proxmox
 from pulumi_proxmoxve import Provider
-from pulumi_proxmoxve.vm import VirtualMachine
+
+from components import ProxmoxVM
 
 config = pulumi.Config("proxmox")
 endpoint = config.require("endpoint")
@@ -17,62 +17,29 @@ provider = Provider(
     insecure=True
 )
 
+STAGE_VMS = [
+    {"name": "lab",    "vmid": 200, "cpu": 2, "ram": 4096,  "ip": "192.168.4.200", "mac": "CA:9B:F1:85:90:C0", "clone": False, "template": "small"},
+]
 
-virtual_machine = proxmox.vm.VirtualMachine(
-    opts=pulumi.ResourceOptions(provider=provider),
-    name="lab",             # Name in Proxmox
-    resource_name="lab",    # Name in Pulumi config
-    node_name="esper", 
-    vm_id=200,
-    agent=proxmox.vm.VirtualMachineAgentArgs(
-        enabled=True, # toggles checking for ip addresses through qemu-guest-agent
-        trim=True,
-        type="virtio"
-    ),
-    bios="seabios",
-    cpu=proxmox.vm.VirtualMachineCpuArgs(
-        cores=2,
-        sockets=1
-    ),
-    memory=proxmox.vm.VirtualMachineMemoryArgs(
-        dedicated=4096
-    ),
-    clone=proxmox.vm.VirtualMachineCloneArgs(
-        node_name="esper",
-        vm_id=301,
-        full=False
-    ),
-    disks=[
-        proxmox.vm.VirtualMachineDiskArgs(
-            interface="scsi0",
-            datastore_id="ssd_mirror",
-            size=36,
-            file_format="qcow2"
-        )
-    ],
-    cdrom=proxmox.vm.VirtualMachineCdromArgs(
-        file_id="none",
-        interface="ide2",
-    ),
-    network_devices=[
-        proxmox.vm.VirtualMachineNetworkDeviceArgs(
-            bridge="vmbr0",
-            model="virtio",
-            mac_address="CA:9B:F1:85:90:C0"
-        )
-    ],
-    on_boot=True,
-    operating_system=proxmox.vm.VirtualMachineOperatingSystemArgs(),
-    initialization=proxmox.vm.VirtualMachineInitializationArgs(
-        type="nocloud",
-        datastore_id="ssd_mirror",
-        ip_configs=[
-            proxmox.vm.VirtualMachineInitializationIpConfigArgs(
-                ipv4=proxmox.vm.VirtualMachineInitializationIpConfigIpv4Args(
-                    address="192.168.4.200/24",
-                    gateway="192.168.4.1"
-                ),
-            )
-        ]
+PROD_VMS = [
+    {"name": "gate",   "vmid": 100, "cpu": 2, "ram": 4096,  "ip": "192.168.4.100", "mac": "82:08:61:78:5A:6C", "clone": False, "template": "small"},
+    {"name": "proxy",  "vmid": 101, "cpu": 2, "ram": 8192,  "ip": "192.168.4.101", "mac": "BC:24:11:88:D8:67", "clone": False, "template": "small"},
+    {"name": "bailey", "vmid": 125, "cpu": 4, "ram": 12288, "ip": "192.168.4.125", "mac": "02:26:85:4A:AC:52", "clone": False, "template": "small"},
+    {"name": "kube-1", "vmid": 126, "cpu": 2, "ram": 8192,  "ip": "192.168.4.126", "mac": "BC:24:11:91:7B:19", "clone": False, "template": "large"},
+]
+
+stack = pulumi.get_stack()
+vms = STAGE_VMS if stack == "stage" else PROD_VMS
+
+for vm in vms:
+    ProxmoxVM(
+        name=vm["name"],
+        vmid=vm["vmid"],
+        cpu=vm["cpu"],
+        ram=vm["ram"],
+        ip=vm["ip"],
+        mac=vm["mac"],
+        clone=vm["clone"],
+        template=vm["template"],
+        opts=pulumi.ResourceOptions(provider=provider),
     )
-)
