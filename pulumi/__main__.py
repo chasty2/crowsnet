@@ -18,7 +18,7 @@ provider = Provider(
 )
 
 STAGE_VMS = [
-    {"name": "lab",    "vmid": 200, "cpu": 2, "ram": 4096,  "ip": "192.168.4.200", "mac": "CA:9B:F1:85:90:C0", "clone": False, "template": "small"},
+    {"name": "lab",    "vmid": 200, "cpu": 2, "ram": 4096,  "ip": "192.168.4.200", "mac": "CA:9B:F1:85:90:C0", "clone": True, "template": "small"},
 ]
 
 PROD_VMS = [
