@@ -1,6 +1,7 @@
 .vscode
 ssh-keys/
 vault.pass
+pulumi.token
 ansible/hosts
 .venv/
 .python-version
@@ -12,7 +13,6 @@ __pycache__/
 *.pyc
 venv/
 Pulumi.yaml
-pulumi/.pulumi/
 
 # Terraform
 **/.terraform/

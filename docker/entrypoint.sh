@@ -5,6 +5,7 @@ ACTION="${1:-}"
 shift || true
 
 VAULT_PASS_FILE="/etc/ansible/vault.pass"
+PULUMI_TOKEN_FILE="/etc/ansible/pulumi.token"
 
 case "$ACTION" in
     configure)
@@ -17,23 +18,20 @@ case "$ACTION" in
         ;;
     deploy)
         cd /pulumi
-        export PULUMI_CONFIG_PASSPHRASE
-        PULUMI_CONFIG_PASSPHRASE=$(cat "$VAULT_PASS_FILE")
-        uv run pulumi login file:///pulumi
+        export PULUMI_ACCESS_TOKEN
+        PULUMI_ACCESS_TOKEN=$(cat "$PULUMI_TOKEN_FILE")
         uv run pulumi up --yes --stack "$@"
         ;;
     destroy)
         cd /pulumi
-        export PULUMI_CONFIG_PASSPHRASE
-        PULUMI_CONFIG_PASSPHRASE=$(cat "$VAULT_PASS_FILE")
-        uv run pulumi login file:///pulumi
+        export PULUMI_ACCESS_TOKEN
+        PULUMI_ACCESS_TOKEN=$(cat "$PULUMI_TOKEN_FILE")
         uv run pulumi destroy --yes --stack "$@"
         ;;
     refresh)
         cd /pulumi
-        export PULUMI_CONFIG_PASSPHRASE
-        PULUMI_CONFIG_PASSPHRASE=$(cat "$VAULT_PASS_FILE")
-        uv run pulumi login file:///pulumi
+        export PULUMI_ACCESS_TOKEN
+        PULUMI_ACCESS_TOKEN=$(cat "$PULUMI_TOKEN_FILE")
         uv run pulumi refresh --yes --stack "$@"
         ;;
     test)
