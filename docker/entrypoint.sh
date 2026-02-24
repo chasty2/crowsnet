@@ -5,7 +5,7 @@ ACTION="${1:-}"
 shift || true
 
 VAULT_PASS_FILE="/etc/ansible/vault.pass"
-PULUMI_TOKEN_FILE="/etc/ansible/pulumi.token"
+PULUMI_TOKEN_FILE="/pulumi/pulumi.token"
 
 case "$ACTION" in
     configure)
