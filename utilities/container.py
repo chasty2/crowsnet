@@ -53,6 +53,7 @@ def run_container(action: str, args: list[str] | None = None) -> int:
         "run",
         "-it",
         "--rm",
+        "--userns=keep-id",
         "--network",
         "host",
         "--volume",
