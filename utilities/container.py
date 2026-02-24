@@ -1,5 +1,6 @@
-"""Utilities for building and running the Ansible container."""
+"""Utilities for building and running the CrowsNet container."""
 
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -7,32 +8,42 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent
 DOCKER_DIR = PROJECT_ROOT / "docker"
 ANSIBLE_DIR = PROJECT_ROOT / "ansible"
-CONTAINER_NAME = "ansible-crowsnet"
+PULUMI_DIR = PROJECT_ROOT / "pulumi"
+CONTAINER_NAME = "crowsnet"
 
 
-def build_container(extra_args: list[str] | None = None) -> int:
-    """Build the ansible container with podman.
+def build_container() -> int:
+    """Build the crowsnet container with podman.
 
-    Args:
-        extra_args: Additional arguments to pass to podman build.
+    Copies pyproject.toml and uv.lock into the docker build context,
+    builds the container, then cleans up the copied files.
 
     Returns:
         The return code from podman build.
     """
-    cmd = ["podman", "build", ".", "-t", f"{CONTAINER_NAME}:latest"]
-    if extra_args:
-        cmd.extend(extra_args)
+    pyproject_src = PROJECT_ROOT / "pyproject.toml"
+    uvlock_src = PROJECT_ROOT / "uv.lock"
+    pyproject_dst = DOCKER_DIR / "pyproject.toml"
+    uvlock_dst = DOCKER_DIR / "uv.lock"
 
-    result = subprocess.run(cmd, cwd=DOCKER_DIR, check=False)
-    return result.returncode
+    try:
+        shutil.copy2(pyproject_src, pyproject_dst)
+        shutil.copy2(uvlock_src, uvlock_dst)
+
+        cmd = ["podman", "build", ".", "-t", f"{CONTAINER_NAME}:latest"]
+        result = subprocess.run(cmd, cwd=DOCKER_DIR, check=False)
+        return result.returncode
+    finally:
+        pyproject_dst.unlink(missing_ok=True)
+        uvlock_dst.unlink(missing_ok=True)
 
 
-def run_playbook(playbook: str, extra_args: list[str] | None = None) -> int:
-    """Run an ansible playbook inside the container.
+def run_container(action: str, args: list[str] | None = None) -> int:
+    """Run an action in the crowsnet container.
 
     Args:
-        playbook: Path to the playbook file (relative to ansible directory).
-        extra_args: Additional arguments to pass to ansible-playbook.
+        action: The entrypoint action (configure, deploy, destroy, refresh, update, test).
+        args: Additional arguments to pass after the action.
 
     Returns:
         The return code from podman run.
@@ -40,20 +51,20 @@ def run_playbook(playbook: str, extra_args: list[str] | None = None) -> int:
     cmd = [
         "podman",
         "run",
-        "-it",  # Interactive mode
-        "--rm",  # Delete container after use
+        "-it",
+        "--rm",
         "--network",
-        "host",  # Use host networking
+        "host",
         "--volume",
-        f"{ANSIBLE_DIR}:/etc/ansible",  # point /etc/ansible in container to same directory in host
-        "-w",
-        "/etc/ansible",  # Set /etc/ansible as container working directory
+        f"{ANSIBLE_DIR}:/etc/ansible",
+        "--volume",
+        f"{PULUMI_DIR}:/pulumi",
         CONTAINER_NAME,
-        playbook,
+        action,
     ]
 
-    if extra_args:
-        cmd.extend(extra_args)
+    if args:
+        cmd.extend(args)
 
     result = subprocess.run(cmd, check=False)
     return result.returncode
