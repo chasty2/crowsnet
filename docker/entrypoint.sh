@@ -10,29 +10,29 @@ PULUMI_TOKEN_FILE="/pulumi/pulumi.token"
 case "$ACTION" in
     configure)
         cd /etc/ansible
-        uv run ansible-playbook --vault-password-file "$VAULT_PASS_FILE" site.yml "$@"
+        ansible-playbook --vault-password-file "$VAULT_PASS_FILE" site.yml "$@"
         ;;
     update)
         cd /etc/ansible
-        uv run ansible-playbook --vault-password-file "$VAULT_PASS_FILE" update.yml "$@"
+        ansible-playbook --vault-password-file "$VAULT_PASS_FILE" update.yml "$@"
         ;;
     deploy)
         cd /pulumi
         export PULUMI_ACCESS_TOKEN
         PULUMI_ACCESS_TOKEN=$(cat "$PULUMI_TOKEN_FILE")
-        uv run pulumi up --yes --stack "$@"
+        pulumi up --yes --stack "$@"
         ;;
     destroy)
         cd /pulumi
         export PULUMI_ACCESS_TOKEN
         PULUMI_ACCESS_TOKEN=$(cat "$PULUMI_TOKEN_FILE")
-        uv run pulumi destroy --yes --stack "$@"
+        pulumi destroy --yes --stack "$@"
         ;;
     refresh)
         cd /pulumi
         export PULUMI_ACCESS_TOKEN
         PULUMI_ACCESS_TOKEN=$(cat "$PULUMI_TOKEN_FILE")
-        uv run pulumi refresh --yes --stack "$@"
+        pulumi refresh --yes --stack "$@"
         ;;
     test)
         echo "Test action placeholder"

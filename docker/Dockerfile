@@ -52,7 +52,7 @@ ENV ANSIBLE_RETRY_FILES_ENABLED=false
 ENV ANSIBLE_PYTHON_INTERPRETER=auto_silent
 
 # Upgrade podman collection (fix: nfs bind mount idempotency)
-RUN uv run ansible-galaxy collection install --upgrade containers.podman
+RUN ansible-galaxy collection install --upgrade containers.podman
 
 # Set entrypoint
 COPY --chown=ansible:ansible ./entrypoint.sh /entrypoint.sh
