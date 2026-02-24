@@ -3,27 +3,30 @@
 ## Project Overview
 - **Name**: CrowsNet
 - **Purpose**: Self-hosted homelab, runs entirely out of infrastructure-as-code
-- **Stack**: Python (uv), Ansible, Terraform, Podman
+- **Stack**: Python (uv), Ansible, Pulumi, Podman
 
 
 ## Commands
 
 ```bash
-# Ansible
-./crowsnet.py build              # Build the ansible container
-./crowsnet.py site               # Run full site deployment
-./crowsnet.py physical           # Run physical hosts only
-./crowsnet.py virtual            # Run virtual hosts only
-./crowsnet.py update             # Update and reboot all VMs
-./crowsnet.py run <playbook>     # Run a custom playbook
+# Container
+./crowsnet.py build                        # Build the CrowsNet container
 
-# Terraform
-./crowsnet.py build --terraform           # Build the terraform container
-./crowsnet.py deploy <prod|stage|all>     # Deploy VMs (init + apply)
-./crowsnet.py terraform <args>            # Run terraform commands (--env option)
+# Infrastructure (Pulumi)
+./crowsnet.py deploy <stage|prod>          # Deploy infrastructure
+./crowsnet.py destroy <stage|prod>         # Destroy infrastructure
+./crowsnet.py refresh <stage|prod>         # Refresh infrastructure state
+
+# Configuration (Ansible)
+./crowsnet.py configure                    # Full site deployment
+./crowsnet.py configure --tags users       # Run specific tags
+./crowsnet.py configure --limit gate       # Limit to specific host
+./crowsnet.py configure --check            # Dry-run mode
+
+# Maintenance
+./crowsnet.py update                       # Update and reboot all VMs
+./crowsnet.py test                         # Run tests
 ```
-
-Additional arguments are passed directly to the underlying operation (`ansible-playbook` for playbook commands, `podman build` for build).
 
 ## Workflow Patterns (TODO after implementing molecule testing)
 
@@ -31,12 +34,12 @@ Additional arguments are passed directly to the underlying operation (`ansible-p
 ```
 crowsnet/
 ├── ansible/            # Configures servers and containers
-├── terraform/          # Infrastructure provisioning
-│   ├── azure/          # Azure cloud resources
-│   └── proxmox/        # Proxmox VM definitions (prod, stage)
+├── pulumi/             # Infrastructure provisioning (Proxmox VMs)
+├── terraform/          # Legacy infrastructure provisioning
 ├── docker/             # Container definitions
-│   ├── Dockerfile      # Ansible container
-│   └── terraform/      # Terraform container
+│   ├── Dockerfile      # Unified CrowsNet container (Ansible + Pulumi)
+│   ├── entrypoint.sh   # Action dispatcher (configure, deploy, etc.)
+│   └── terraform/      # Legacy terraform container
 ├── utilities/          # Python utilities for container operations
 └── crowsnet.py         # CLI entry point for all operations
 ```

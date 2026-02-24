@@ -12,6 +12,7 @@ __pycache__/
 *.pyc
 venv/
 Pulumi.yaml
+pulumi/pulumi.token
 
 # Terraform
 **/.terraform/
