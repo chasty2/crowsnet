@@ -39,9 +39,13 @@ def refresh(stack):
 
 
 @cli.command()
-def update():
+@click.option("--limit", default=None, help="Limit to specific hosts")
+def update(limit):
     """Update and reboot all VMs."""
-    sys.exit(run_container("update"))
+    args = []
+    if limit:
+        args.extend(["--limit", limit])
+    sys.exit(run_container("update", args if args else None))
 
 
 @cli.command()
