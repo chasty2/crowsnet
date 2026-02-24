@@ -40,8 +40,10 @@ COPY --chown=ansible:ansible pyproject.toml uv.lock /app/
 WORKDIR /app
 RUN uv sync --frozen
 
-# Set uv project environment so uv run works from any workdir
+# Activate venv so all subprocesses (including Pulumi's Python executor) find packages
+ENV VIRTUAL_ENV=/app/.venv
 ENV UV_PROJECT_ENVIRONMENT=/app/.venv
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Ansible environment variables
 ENV ANSIBLE_HOST_KEY_CHECKING=false
