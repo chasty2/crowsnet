@@ -35,11 +35,9 @@
 crowsnet/
 ├── ansible/            # Configures servers and containers
 ├── pulumi/             # Infrastructure provisioning (Proxmox VMs)
-├── terraform/          # Legacy infrastructure provisioning
 ├── docker/             # Container definitions
 │   ├── Dockerfile      # Unified CrowsNet container (Ansible + Pulumi)
-│   ├── entrypoint.sh   # Action dispatcher (configure, deploy, etc.)
-│   └── terraform/      # Legacy terraform container
+│   └── entrypoint.sh   # Action dispatcher (configure, deploy, etc.)
 ├── utilities/          # Python utilities for container operations
 └── crowsnet.py         # CLI entry point for all operations
 ```

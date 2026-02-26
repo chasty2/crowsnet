@@ -13,12 +13,3 @@ __pycache__/
 venv/
 Pulumi.yaml
 pulumi/pulumi.token
-
-# Terraform
-**/.terraform/
-*.tfstate
-*.tfstate.*
-*.tfvars
-crash.log
-.terraform.lock.hcl
-docker/terraform/terraform.tfvars
