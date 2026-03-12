@@ -4,6 +4,10 @@
   ansible.builtin.include_tasks: jupyter_system.yml
   tags: system
 
+- name: Package Config
+  ansible.builtin.include_tasks: jupyter_packages.yml
+  tags: packages
+
 - name: Firewall Config
   ansible.builtin.include_tasks: jupyter_firewalld.yml
   tags: firewall

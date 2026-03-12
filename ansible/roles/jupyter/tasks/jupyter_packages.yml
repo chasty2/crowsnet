@@ -1,0 +1,10 @@
+---
+- name: Package Config Block
+  become: true
+  tags: packages
+  block:
+    - name: Install Jupyter export dependencies
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      with_items: "{{ jupyter_packages }}"

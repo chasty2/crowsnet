@@ -1,3 +1,9 @@
 ---
 jupyter_permitted_ports:
   - 8888/tcp  # jupyter notebook web interface
+
+jupyter_packages:
+  - texlive-xetex
+  - texlive-fonts-recommended
+  - texlive-plain-generic
+  - pandoc
