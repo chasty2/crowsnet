@@ -1,5 +1,0 @@
----
-# tasks file for testing role
-- name: Package Config
-  ansible.builtin.include_tasks: testing_packages.yml
-  tags: packages

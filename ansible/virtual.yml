@@ -33,4 +33,4 @@
   roles:
     - podman
     - jellyfin
-    # - foundry
+    - foundry
