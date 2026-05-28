@@ -1,5 +1,0 @@
----
-# vars file for testing role
-testing_packages:
-  - virtualbox
-  - vagrant
