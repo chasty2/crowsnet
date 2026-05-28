@@ -35,19 +35,18 @@
     - name: Start foundry container
       containers.podman.podman_container:
         name: foundry
+        hostname: bailey
         image: docker.io/felddy/foundryvtt:release
         ports:
           - "30000:30000"
-        # Map podman user to root in container
-        userns: host
-        # Run foundry as root within container
+        # Map podman user to user running in container
         # This preserves all files being owned by podman user
+        userns: keep-id
+        user: 2004:2004   # podman uid/gid
         env:
           FOUNDRY_USERNAME="{{ foundry_login }}"
           FOUNDRY_PASSWORD="{{ foundry_login_password }}"
           FOUNDRY_PROTOCOL=4
-          FOUNDRY_UID=0
-          FOUNDRY_GID=0
           CONTAINER_CACHE_SIZE=3
           CONTAINER_PRESERVE_CONFIG='true'
         mount:
