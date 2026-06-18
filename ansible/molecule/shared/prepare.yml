@@ -1,0 +1,14 @@
+---
+# Shared molecule prepare playbook (reused by every role scenario).
+# Refreshes the apt cache on the freshly-cloned lab VM so package installs
+# resolve current versions (the template's cache is stale and pins versions
+# whose .deb files have aged out of the mirror).
+- name: Prepare
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Update the apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 0

@@ -14,6 +14,7 @@ provisioner:
   name: ansible
   playbooks:
     create: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/create.yml
+    prepare: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/prepare.yml
     destroy: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/destroy.yml
   env:
     ANSIBLE_HOST_KEY_CHECKING: "false"
