@@ -4,6 +4,7 @@
 import sys
 import click
 from utilities.container import build_container, run_container
+from utilities.testing import run_integration, run_pytest
 
 
 @click.group()
@@ -49,9 +50,12 @@ def update(limit):
 
 
 @cli.command()
-def test():
-    """Run tests."""
-    sys.exit(run_container("test"))
+@click.option("--integration", is_flag=True, help="Run the molecule integration suite against the stage VM")
+def test(integration):
+    """Run the test suite (pytest unit tests by default)."""
+    if integration:
+        sys.exit(run_integration())
+    sys.exit(run_pytest())
 
 
 @cli.command()

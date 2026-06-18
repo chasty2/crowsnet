@@ -4,6 +4,7 @@ import pulumi
 from pulumi_proxmoxve import Provider
 
 from components import ProxmoxVM
+from vms import select_vms
 
 config = pulumi.Config("proxmox")
 endpoint = config.require("endpoint")
@@ -17,22 +18,7 @@ provider = Provider(
     insecure=True
 )
 
-STAGE_VMS = [
-    {"name": "lab",    "vmid": 200, "cpu": 2, "ram": 4096,  "ip": "192.168.4.200", "mac": "CA:9B:F1:85:90:C0", "clone": True, "template": "small"},
-]
-
-PROD_VMS = [
-    {"name": "gate",   "vmid": 100, "cpu": 2, "ram": 4096,  "ip": "192.168.4.100", "mac": "82:08:61:78:5A:6C", "clone": False, "template": "small"},
-    {"name": "proxy",  "vmid": 101, "cpu": 2, "ram": 8192,  "ip": "192.168.4.101", "mac": "BC:24:11:88:D8:67", "clone": False, "template": "small"},
-    {"name": "bailey", "vmid": 125, "cpu": 4, "ram": 12288, "ip": "192.168.4.125", "mac": "02:26:85:4A:AC:52", "clone": False, "template": "small"},
-    {"name": "kube-1", "vmid": 126, "cpu": 2, "ram": 8192,  "ip": "192.168.4.126", "mac": "BC:24:11:91:7B:19", "clone": False, "template": "large"},
-]
-
-stack = pulumi.get_stack()
-if stack not in ("stage", "prod"):
-    raise ValueError(f"Unknown stack '{stack}'. Expected 'stage' or 'prod'.")
-
-vms = STAGE_VMS if stack == "stage" else PROD_VMS
+vms = select_vms(pulumi.get_stack())
 
 for vm in vms:
     ProxmoxVM(

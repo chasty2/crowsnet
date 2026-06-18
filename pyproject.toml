@@ -13,3 +13,12 @@ dependencies = [
     "pulumi>=3.220.0",
     "pulumi-proxmoxve>=7.13.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-mock>=3.14.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
