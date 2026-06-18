@@ -6,6 +6,9 @@ container.
 """
 
 import subprocess
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).parent.parent
 
 
 def run_pytest() -> int:
@@ -21,7 +24,15 @@ def run_pytest() -> int:
 def run_integration() -> int:
     """Run the molecule integration suite against the stage VM.
 
-    Implemented in Phase 2 (molecule delegated driver + Pulumi lifecycle).
+    Molecule provisions the lab VM via Pulumi, converges the common role,
+    checks idempotency, and destroys the VM. Runs from the role directory so
+    molecule picks up that role's `default` scenario.
+
+    Returns:
+        The return code from molecule.
     """
-    print("Integration tests are not implemented yet (Phase 2).")
-    return 1
+    role_dir = PROJECT_ROOT / "ansible" / "roles" / "common"
+    result = subprocess.run(
+        ["uv", "run", "molecule", "test"], cwd=role_dir, check=False
+    )
+    return result.returncode

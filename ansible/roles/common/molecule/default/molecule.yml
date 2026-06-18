@@ -1,0 +1,23 @@
+---
+driver:
+  name: default
+
+platforms:
+  - name: lab
+
+dependency:
+  name: galaxy
+  options:
+    requirements-file: ${MOLECULE_PROJECT_DIRECTORY}/../requirements.yml
+
+provisioner:
+  name: ansible
+  playbooks:
+    create: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/create.yml
+    destroy: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/destroy.yml
+  env:
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..
+
+verifier:
+  name: ansible

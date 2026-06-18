@@ -1,0 +1,47 @@
+---
+# Shared molecule create playbook (reused by every role scenario).
+# Provisions the Pulumi `stage` stack (the lab VM), waits for SSH, and writes
+# the molecule instance config so converge knows how to connect.
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    project_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+    pulumi_dir: "{{ project_dir }}/../../../pulumi"
+    pulumi_token_file: "{{ pulumi_dir }}/pulumi.token"
+    lab_address: "{{ lookup('env', 'MOLECULE_LAB_ADDRESS') | default('192.168.4.200', true) }}"
+    lab_user: "{{ lookup('env', 'MOLECULE_LAB_USER') | default('ansible', true) }}"
+    lab_ssh_key: >-
+      {{ lookup('env', 'MOLECULE_LAB_SSH_KEY')
+         | default(lookup('env', 'HOME') ~ '/.ssh/ansible_ed25519', true) }}
+  tasks:
+    - name: Deploy the stage stack with Pulumi
+      ansible.builtin.command:
+        cmd: pulumi up --yes --stack stage
+        chdir: "{{ pulumi_dir }}"
+      environment:
+        PULUMI_ACCESS_TOKEN: "{{ lookup('file', pulumi_token_file) }}"
+      changed_when: true
+
+    - name: Wait for the lab VM SSH to become reachable
+      ansible.builtin.wait_for:
+        host: "{{ lab_address }}"
+        port: 22
+        delay: 10
+        timeout: 300
+
+    - name: Build the molecule instance config
+      ansible.builtin.set_fact:
+        instance_conf:
+          - instance: lab
+            address: "{{ lab_address }}"
+            user: "{{ lab_user }}"
+            port: 22
+            identity_file: "{{ lab_ssh_key }}"
+
+    - name: Write the molecule instance config
+      ansible.builtin.copy:
+        content: "{{ instance_conf | to_json | from_json | to_yaml }}"
+        dest: "{{ molecule_instance_config }}"
+        mode: "0600"

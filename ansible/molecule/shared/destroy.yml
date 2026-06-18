@@ -1,0 +1,26 @@
+---
+# Shared molecule destroy playbook (reused by every role scenario).
+# Tears down the Pulumi `stage` stack and clears the molecule instance config.
+# molecule always runs this last in `molecule test`, even on failure.
+- name: Destroy
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    project_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+    pulumi_dir: "{{ project_dir }}/../../../pulumi"
+    pulumi_token_file: "{{ pulumi_dir }}/pulumi.token"
+  tasks:
+    - name: Destroy the stage stack with Pulumi
+      ansible.builtin.command:
+        cmd: pulumi destroy --yes --stack stage
+        chdir: "{{ pulumi_dir }}"
+      environment:
+        PULUMI_ACCESS_TOKEN: "{{ lookup('file', pulumi_token_file) }}"
+      changed_when: true
+
+    - name: Reset the molecule instance config
+      ansible.builtin.copy:
+        content: "{{ [] | to_yaml }}"
+        dest: "{{ molecule_instance_config }}"
+        mode: "0600"
