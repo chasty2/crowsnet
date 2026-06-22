@@ -2,6 +2,7 @@
 
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -48,10 +49,13 @@ def run_container(action: str, args: list[str] | None = None) -> int:
     Returns:
         The return code from podman run.
     """
+    # Allocate a TTY only when attached to one; CI runners have no TTY.
+    tty_flag = "-it" if sys.stdout.isatty() else "-i"
+
     cmd = [
         "podman",
         "run",
-        "-it",
+        tty_flag,
         "--rm",
         "--userns=keep-id",
         "--network",

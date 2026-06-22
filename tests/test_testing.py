@@ -22,38 +22,18 @@ def test_run_pytest_invokes_uv(mocker):
     assert recorder["cmd"] == ["uv", "run", "pytest"]
 
 
-def test_run_integration_builds_container_command(mocker):
-    recorder = {}
-    mocker.patch.object(testing.subprocess, "run", _fake_run(0, recorder))
-    mocker.patch("pathlib.Path.exists", return_value=True)
-    mocker.patch("pathlib.Path.read_text", return_value="secret-token\n")
-
+def test_run_integration_dispatches_test_action(mocker):
+    run_container = mocker.patch.object(testing, "run_container", return_value=0)
     assert testing.run_integration() == 0
-
-    cmd = recorder["cmd"]
-    assert cmd[0:2] == ["podman", "run"]
-    assert "--network" in cmd and "host" in cmd
-    assert f"{testing.PROJECT_ROOT}:/workspace" in cmd
-    # runs from the role's scenario directory under the mounted repo
-    assert "/workspace/ansible/roles/common" in cmd
-    # token passed through the environment, not a world-readable mount
-    assert "PULUMI_ACCESS_TOKEN=secret-token" in cmd
-    # molecule is the entrypoint, given the `test` subcommand
-    assert cmd[-4:] == ["--entrypoint", "molecule", testing.CONTAINER_NAME, "test"]
+    run_container.assert_called_once_with("test", ["common"])
 
 
-def test_run_integration_accepts_role(mocker):
-    recorder = {}
-    mocker.patch.object(testing.subprocess, "run", _fake_run(0, recorder))
-    mocker.patch("pathlib.Path.exists", return_value=True)
-    mocker.patch("pathlib.Path.read_text", return_value="t")
-
+def test_run_integration_forwards_role(mocker):
+    run_container = mocker.patch.object(testing, "run_container", return_value=0)
     testing.run_integration("jellyfin")
-    assert "/workspace/ansible/roles/jellyfin" in recorder["cmd"]
+    run_container.assert_called_once_with("test", ["jellyfin"])
 
 
 def test_run_integration_propagates_return_code(mocker):
-    mocker.patch.object(testing.subprocess, "run", _fake_run(5))
-    mocker.patch("pathlib.Path.exists", return_value=True)
-    mocker.patch("pathlib.Path.read_text", return_value="t")
+    mocker.patch.object(testing, "run_container", return_value=5)
     assert testing.run_integration() == 5

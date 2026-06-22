@@ -7,11 +7,8 @@ keys, and the Ansible collections configured.
 """
 
 import subprocess
-from pathlib import Path
 
-from utilities.container import CONTAINER_NAME
-
-PROJECT_ROOT = Path(__file__).parent.parent
+from utilities.container import run_container
 
 
 def run_pytest() -> int:
@@ -27,10 +24,11 @@ def run_pytest() -> int:
 def run_integration(role: str = "common") -> int:
     """Run the molecule integration suite for a role inside the ops container.
 
-    Molecule provisions the lab VM via Pulumi, converges the role, checks
-    idempotency, and destroys the VM. The whole repo is mounted at /workspace so
-    the scenario's repo-relative paths (to pulumi/ and group_vars/) resolve, and
-    molecule runs from the role directory to pick up its `default` scenario.
+    Dispatches the container's `test` action through the same `run_container`
+    path as production (configure/deploy), so molecule sees the production mount
+    layout (ansible -> /etc/ansible, pulumi -> /pulumi) and user-namespace mapping.
+    Molecule then provisions the lab VM via Pulumi, converges the role, checks
+    idempotency, and destroys the VM.
 
     Args:
         role: The role whose molecule scenario to run.
@@ -38,26 +36,4 @@ def run_integration(role: str = "common") -> int:
     Returns:
         The return code from the container.
     """
-    token_file = PROJECT_ROOT / "pulumi" / "pulumi.token"
-    token = token_file.read_text().strip() if token_file.exists() else ""
-
-    cmd = [
-        "podman",
-        "run",
-        "--rm",
-        "--network",
-        "host",
-        "--volume",
-        f"{PROJECT_ROOT}:/workspace",
-        "--workdir",
-        f"/workspace/ansible/roles/{role}",
-        "--env",
-        f"PULUMI_ACCESS_TOKEN={token}",
-        "--entrypoint",
-        "molecule",
-        CONTAINER_NAME,
-        "test",
-    ]
-
-    result = subprocess.run(cmd, check=False)
-    return result.returncode
+    return run_container("test", [role])
