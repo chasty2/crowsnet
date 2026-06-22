@@ -7,9 +7,8 @@
   connection: local
   gather_facts: false
   vars:
-    project_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
-    pulumi_dir: "{{ project_dir }}/../../../pulumi"
-    pulumi_token_file: "{{ pulumi_dir }}/pulumi.token"
+    pulumi_dir: /pulumi
+    pulumi_token_file: /pulumi/pulumi.token
     lab_address: "{{ lookup('env', 'MOLECULE_LAB_ADDRESS') | default('192.168.4.200', true) }}"
     lab_user: "{{ lookup('env', 'MOLECULE_LAB_USER') | default('ansible', true) }}"
     lab_ssh_key: >-

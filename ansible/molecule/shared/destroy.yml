@@ -7,9 +7,8 @@
   connection: local
   gather_facts: false
   vars:
-    project_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
-    pulumi_dir: "{{ project_dir }}/../../../pulumi"
-    pulumi_token_file: "{{ pulumi_dir }}/pulumi.token"
+    pulumi_dir: /pulumi
+    pulumi_token_file: /pulumi/pulumi.token
   tasks:
     - name: Destroy the stage stack with Pulumi
       ansible.builtin.command:

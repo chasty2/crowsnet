@@ -35,7 +35,9 @@ case "$ACTION" in
         pulumi refresh --yes --stack "$@"
         ;;
     test)
-        echo "Test action placeholder"
+        ROLE="${1:-common}"
+        cd "/etc/ansible/roles/${ROLE}"
+        molecule test
         ;;
     *)
         echo "Unknown action: $ACTION"

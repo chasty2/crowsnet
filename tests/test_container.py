@@ -20,6 +20,7 @@ def _fake_run(returncode=0, recorder=None):
 def test_run_container_builds_expected_command(mocker):
     recorder = {}
     mocker.patch.object(container.subprocess, "run", _fake_run(0, recorder))
+    mocker.patch.object(container.sys.stdout, "isatty", return_value=True)
 
     rc = container.run_container("configure")
 
@@ -30,6 +31,18 @@ def test_run_container_builds_expected_command(mocker):
     assert f"{container.ANSIBLE_DIR}:/etc/ansible" in cmd
     assert f"{container.PULUMI_DIR}:/pulumi" in cmd
     assert cmd[-1] == "configure"
+
+
+def test_run_container_allocates_tty_only_when_attached(mocker):
+    recorder = {}
+    mocker.patch.object(container.subprocess, "run", _fake_run(0, recorder))
+    mocker.patch.object(container.sys.stdout, "isatty", return_value=True)
+    container.run_container("configure")
+    assert recorder["cmd"][2] == "-it"
+
+    mocker.patch.object(container.sys.stdout, "isatty", return_value=False)
+    container.run_container("configure")
+    assert recorder["cmd"][2] == "-i"
 
 
 def test_run_container_appends_args(mocker):
