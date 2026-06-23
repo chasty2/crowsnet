@@ -28,7 +28,6 @@
 
 # Testing
 ./crowsnet.py test                                # Unit tests (pytest, host-side, no infra)
-uv run pytest                                     # Same unit suite, run directly
 ./crowsnet.py test --integration                  # Molecule integration suite (role: common)
 ./crowsnet.py test --integration --role <role>    # Integration suite for a specific role
 ```
@@ -39,7 +38,7 @@ The suite has two layers (a third, CI on a self-hosted runner, is still pending)
 
 - **Unit (pytest)** — fast, host-only, no infrastructure. Covers the Click CLI
   dispatch, podman command construction, and Pulumi component logic. Lives in
-  `tests/`. Run on every change via `./crowsnet.py test` (or `uv run pytest`).
+  `tests/`. Run on every change via `./crowsnet.py test`.
 - **Integration (Molecule)** — provisions the real `stage` lab VM via Pulumi,
   converges a role, checks idempotency, then tears the VM down (destroy always
   runs last, even on failure). Run when changing an Ansible role via
