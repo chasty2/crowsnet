@@ -48,5 +48,78 @@ Each role should have a `tests/` directory containing a `test.yml` playbook that
 - Runs the role and its dependencies
 - Targets the host `lab`
 
+## Molecule Testing
+
+Roles are integration-tested with Molecule. A `molecule test` run provisions the
+real `stage` lab VM via Pulumi, converges the role, checks **idempotency**, runs
+the verifier, then destroys the VM (destroy always runs last, even on failure).
+
+Run a role's scenario from the repo root:
+```bash
+./crowsnet.py test --integration --role <role>   # defaults to `common`
+```
+
+### Adding a scenario to a role
+Place the scenario under the role:
+```
+roles/<role>/molecule/default/
+├── molecule.yml      # scenario config
+├── converge.yml      # applies the role
+└── verify.yml        # optional smoke checks
+```
+
+The lifecycle playbooks (`create`, `prepare`, `destroy`) are written **once** in
+`ansible/molecule/shared/` and reused by every role — do **not** reimplement them
+per role. The fastest path to a new scenario is to copy
+`roles/common/molecule/default/` and adjust the role name.
+
+**`molecule.yml`** — `driver: default`; one platform named `lab`; a galaxy
+dependency pointing at `../requirements.yml`; `provisioner.playbooks` wiring the
+three shared playbooks; `ANSIBLE_ROLES_PATH` set to the roles directory; and
+`verifier: ansible`:
+```yaml
+---
+driver:
+  name: default
+
+platforms:
+  - name: lab
+
+dependency:
+  name: galaxy
+  options:
+    requirements-file: ${MOLECULE_PROJECT_DIRECTORY}/../requirements.yml
+
+provisioner:
+  name: ansible
+  playbooks:
+    create: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/create.yml
+    prepare: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/prepare.yml
+    destroy: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/destroy.yml
+  env:
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..
+
+verifier:
+  name: ansible
+```
+
+**`converge.yml`** — `hosts: all`, `become: true`, loads shared vars from
+`group_vars/all`, and lists the role:
+```yaml
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars_files:
+    - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../group_vars/all"
+  roles:
+    - <role> # noqa syntax-check[specific]
+```
+
+**`verify.yml`** (optional) — minimal smoke checks asserting the role's key
+effects (a service is running, a user exists, etc.). Do **not** test idempotency
+here; molecule's built-in `idempotence` step handles that.
+
 ## Formatting
 - End each `.yml` file with a newline
