@@ -33,8 +33,8 @@ role_name/
 │   ├── role_name_packages.yml      # Package management tasks
 │   ├── role_name_services.yml      # Service management tasks
 │   └── role_name_firewalld.yml     # Firewall configuration tasks
-├── tests/
-│   └── test.yml          # Test playbook for the role
+├── molecule/
+│   └── default/          # Molecule integration scenario (see Molecule Testing)
 ├── vars/main.yml         # Role variables
 ├── handlers/main.yml     # Event handlers
 ├── templates/            # Jinja2 templates
@@ -43,10 +43,9 @@ role_name/
 
 This standardization allows predictable role structure and granular control over which aspects of configuration to apply during playbook runs.
 
-### Role Testing
-Each role should have a `tests/` directory containing a `test.yml` playbook that:
-- Runs the role and its dependencies
-- Targets the host `lab`
+> **Note:** Roles are tested with Molecule (see below), not the legacy
+> `tests/test.yml` playbook. New roles get a `molecule/` scenario instead of a
+> `tests/` directory.
 
 ## Molecule Testing
 
