@@ -56,6 +56,7 @@ crowsnet/
 │   ├── Dockerfile      # Unified CrowsNet container (Ansible + Pulumi)
 │   └── entrypoint.sh   # Action dispatcher (configure, deploy, etc.)
 ├── utilities/          # Python utilities for container operations
+├── tests/              # Host-side pytest unit tests (CLI, container, Pulumi)
 └── crowsnet.py         # CLI entry point for all operations
 ```
 
