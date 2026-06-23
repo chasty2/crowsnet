@@ -33,8 +33,8 @@ role_name/
 │   ├── role_name_packages.yml      # Package management tasks
 │   ├── role_name_services.yml      # Service management tasks
 │   └── role_name_firewalld.yml     # Firewall configuration tasks
-├── tests/
-│   └── test.yml          # Test playbook for the role
+├── molecule/
+│   └── default/          # Molecule integration scenario (see Molecule Testing)
 ├── vars/main.yml         # Role variables
 ├── handlers/main.yml     # Event handlers
 ├── templates/            # Jinja2 templates
@@ -43,10 +43,83 @@ role_name/
 
 This standardization allows predictable role structure and granular control over which aspects of configuration to apply during playbook runs.
 
-### Role Testing
-Each role should have a `tests/` directory containing a `test.yml` playbook that:
-- Runs the role and its dependencies
-- Targets the host `lab`
+> **Note:** Roles are tested with Molecule (see below), not the legacy
+> `tests/test.yml` playbook. New roles get a `molecule/` scenario instead of a
+> `tests/` directory.
+
+## Molecule Testing
+
+Roles are integration-tested with Molecule. A `molecule test` run provisions the
+real `stage` lab VM via Pulumi, converges the role, checks **idempotency**, runs
+the verifier, then destroys the VM (destroy always runs last, even on failure).
+
+Run a role's scenario from the repo root:
+```bash
+./crowsnet.py test --integration --role <role>   # defaults to `common`
+```
+
+### Adding a scenario to a role
+Place the scenario under the role:
+```
+roles/<role>/molecule/default/
+├── molecule.yml      # scenario config
+├── converge.yml      # applies the role
+└── verify.yml        # smoke checks
+```
+
+The lifecycle playbooks (`create`, `prepare`, `destroy`) are written **once** in
+`ansible/molecule/shared/` and reused by every role — do **not** reimplement them
+per role. The fastest path to a new scenario is to copy
+`roles/common/molecule/default/` and adjust the role name.
+
+**`molecule.yml`** — `driver: default`; one platform named `lab`; a galaxy
+dependency pointing at `../requirements.yml`; `provisioner.playbooks` wiring the
+three shared playbooks; `ANSIBLE_ROLES_PATH` set to the roles directory; and
+`verifier: ansible`:
+```yaml
+---
+driver:
+  name: default
+
+platforms:
+  - name: lab
+
+dependency:
+  name: galaxy
+  options:
+    requirements-file: ${MOLECULE_PROJECT_DIRECTORY}/../requirements.yml
+
+provisioner:
+  name: ansible
+  playbooks:
+    create: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/create.yml
+    prepare: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/prepare.yml
+    destroy: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/destroy.yml
+  env:
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..
+
+verifier:
+  name: ansible
+```
+
+**`converge.yml`** — `hosts: all`, `become: true`, loads shared vars from
+`group_vars/all`, and lists the role:
+```yaml
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars_files:
+    - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../group_vars/all"
+  roles:
+    - <role> # noqa syntax-check[specific]
+```
+
+**`verify.yml`** — smoke checks asserting the role's key
+effects (a service is running, a user exists, etc.). Every scenario must include
+one. Do **not** test idempotency here; molecule's built-in `idempotence` step
+handles that.
 
 ## Formatting
 - End each `.yml` file with a newline
