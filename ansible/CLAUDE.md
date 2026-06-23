@@ -64,7 +64,7 @@ Place the scenario under the role:
 roles/<role>/molecule/default/
 ├── molecule.yml      # scenario config
 ├── converge.yml      # applies the role
-└── verify.yml        # optional smoke checks
+└── verify.yml        # required smoke checks
 ```
 
 The lifecycle playbooks (`create`, `prepare`, `destroy`) are written **once** in
@@ -116,9 +116,10 @@ verifier:
     - <role> # noqa syntax-check[specific]
 ```
 
-**`verify.yml`** (optional) — minimal smoke checks asserting the role's key
-effects (a service is running, a user exists, etc.). Do **not** test idempotency
-here; molecule's built-in `idempotence` step handles that.
+**`verify.yml`** (required) — minimal smoke checks asserting the role's key
+effects (a service is running, a user exists, etc.). Every scenario must include
+one. Do **not** test idempotency here; molecule's built-in `idempotence` step
+handles that.
 
 ## Formatting
 - End each `.yml` file with a newline
