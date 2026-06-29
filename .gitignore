@@ -1,12 +1,16 @@
 .vscode
-ssh-keys/
-vault.pass
-ansible/hosts
 .venv/
 .python-version
-.ansible
-.claude
 __pycache__/
+
+## Claude
+.claude/settings.local.json
+
+## Ansible
+.ansible
+ansible/hosts
+ssh-keys/
+vault.pass
 
 ## Pulumi
 *.pyc

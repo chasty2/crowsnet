@@ -68,6 +68,7 @@ crowsnet/
 4. **Single responsibility** - Functions do one thing, under 50 lines
 5. **Early returns** - Guard clauses over nested conditionals
 6. **Match existing patterns** - Follow the file's conventions exactly
+7. **Use uv for Python** - Invoke all Python tooling through `uv` (e.g. `uv run pytest`, `uv run python ...`, `uv pip ...`); never bare `python`/`pip`/`pytest`
 
 
 ## Git Conventions
