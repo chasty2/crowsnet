@@ -28,5 +28,5 @@
     - name: Assert fzf bash integration is configured
       ansible.builtin.assert:
         that:
-          - "'fzf --bash' in (common_chasty2_bashrc.content | b64decode)"
+          - "'key-bindings.bash' in (common_chasty2_bashrc.content | b64decode)"
         fail_msg: "fzf bash integration missing from chasty2 .bashrc"

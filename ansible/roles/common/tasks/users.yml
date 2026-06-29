@@ -58,7 +58,7 @@
     - name: Enable fzf bash integration for admin users
       ansible.builtin.lineinfile:
         path: "/home/{{ item.name }}/.bashrc"
-        line: 'eval "$(fzf --bash)"'
+        line: '[ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash'
         owner: "{{ item.name }}"
         group: "{{ item.gid }}"
         create: false
