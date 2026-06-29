@@ -54,3 +54,12 @@
         key: "{{ item.public_ssh_key }}"
         state: present
       with_items: "{{ common_ssh_keys }}"
+
+    - name: Enable fzf bash integration for admin users
+      ansible.builtin.lineinfile:
+        path: "/home/{{ item.name }}/.bashrc"
+        line: 'eval "$(fzf --bash)"'
+        owner: "{{ item.name }}"
+        group: "{{ item.gid }}"
+        create: false
+      with_items: "{{ admin_users }}"

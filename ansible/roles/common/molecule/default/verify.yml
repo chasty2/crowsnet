@@ -19,3 +19,14 @@
       ansible.builtin.getent:
         database: passwd
         key: chasty2
+
+    - name: Read chasty2 .bashrc
+      ansible.builtin.slurp:
+        src: /home/chasty2/.bashrc
+      register: common_chasty2_bashrc
+
+    - name: Assert fzf bash integration is configured
+      ansible.builtin.assert:
+        that:
+          - "'fzf --bash' in (common_chasty2_bashrc.content | b64decode)"
+        fail_msg: "fzf bash integration missing from chasty2 .bashrc"
