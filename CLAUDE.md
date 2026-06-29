@@ -76,6 +76,7 @@ crowsnet/
 - All work should be done in a branch outside of main
 - Each goal should be accomplished in its own branch
 - Commit early and often, after each meaningful change
+- Always run the test suite (`./crowsnet.py test`) and have it pass before committing
 - When done, check in with the user for approval
 - Submit a PR to merge into main with a semantic tag in the title (e.g., `feat:`, `fix:`, `refactor:`, `docs:`)
 
