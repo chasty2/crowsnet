@@ -1,6 +1,4 @@
 .vscode
-ssh-keys/
-vault.pass
 .venv/
 .python-version
 __pycache__/
@@ -11,6 +9,8 @@ __pycache__/
 ## Ansible
 .ansible
 ansible/hosts
+ssh-keys/
+vault.pass
 
 ## Pulumi
 *.pyc
