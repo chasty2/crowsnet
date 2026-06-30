@@ -1,0 +1,17 @@
+# .github/workflows/test.yml
+name: test
+on:
+  pull_request:
+    branches: ["main"]
+jobs:
+  pytest:
+    name: Pytest # Naming the build is important to use it as a status check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Run pytest
+        run: uv run pytest
