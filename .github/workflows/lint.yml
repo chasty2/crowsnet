@@ -1,0 +1,29 @@
+# .github/workflows/lint.yml
+name: lint
+on:
+  pull_request:
+    branches: ["main"]
+jobs:
+  ansible-lint:
+    name: Ansible-lint # Naming the build is important to use it as a status check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@main # or vX.X.X version
+        with:
+          args: ""
+          setup_python: "true"
+          working_directory: "./ansible"
+          requirements_file: ""
+  ruff:
+    name: Ruff # Naming the build is important to use it as a status check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Run ruff
+        run: uv run ruff check
