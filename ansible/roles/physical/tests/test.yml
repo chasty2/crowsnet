@@ -2,4 +2,4 @@
 - name: Test physical role configuration
   hosts: lab
   roles:
-    - physical
+    - physical # noqa syntax-check[specific]
