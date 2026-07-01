@@ -72,6 +72,7 @@ def test_scalar_inputs_propagate():
     def check(args):
         cpu, memory, vm_id, networks = args
         assert cpu["cores"] == 4
+        assert cpu["type"] == "host"
         assert memory["dedicated"] == 8192
         assert vm_id == 126
         assert networks[0]["mac_address"] == "BC:24:11:91:7B:19"
