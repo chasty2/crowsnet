@@ -21,6 +21,8 @@ proxmox_nfs_mounts:
       group: podman, mode: "0770" }
   - { path: "/ssd_mirror/foundry", owner: podman,
       group: podman, mode: "0770" }
+  - { path: "/ssd_mirror/secrets", owner: chasty2,
+      group: chasty2, mode: "0770" }
 
 # 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 proxmox_cron_jobs:
@@ -41,6 +43,12 @@ proxmox_cron_jobs:
       hour: "0",
       weekday: "*",
       job: "/root/backup.sh foundry /ssd_mirror/foundry >> /var/log/cron.log 2>&1"
+  }
+  - { name: "Backup secrets, daily at 1245AM",
+      minute: "45",
+      hour: "0",
+      weekday: "*",
+      job: "/root/backup.sh secrets /ssd_mirror/secrets >> /var/log/cron.log 2>&1"
   }
   - { name: "Backup media, Monday at 3AM",
       minute: "0",
