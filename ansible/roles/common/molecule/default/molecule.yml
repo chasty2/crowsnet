@@ -3,7 +3,7 @@ driver:
   name: default
 
 platforms:
-  - name: lab
+  - name: stage
 
 dependency:
   name: galaxy

@@ -8,6 +8,12 @@ import vms
 def test_select_stage_returns_stage_vms():
     selected = vms.select_vms("stage")
     assert selected is vms.STAGE_VMS
+    assert [v["name"] for v in selected] == ["stage"]
+
+
+def test_select_dev_returns_dev_vms():
+    selected = vms.select_vms("dev")
+    assert selected is vms.DEV_VMS
     assert [v["name"] for v in selected] == ["lab"]
 
 

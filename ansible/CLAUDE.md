@@ -50,7 +50,7 @@ This standardization allows predictable role structure and granular control over
 ## Molecule Testing
 
 Roles are integration-tested with Molecule. A `molecule test` run provisions the
-real `stage` lab VM via Pulumi, converges the role, checks **idempotency**, runs
+real `stage` VM via Pulumi, converges the role, checks **idempotency**, runs
 the verifier, then destroys the VM (destroy always runs last, even on failure).
 
 Run a role's scenario from the repo root:
@@ -72,7 +72,7 @@ The lifecycle playbooks (`create`, `prepare`, `destroy`) are written **once** in
 per role. The fastest path to a new scenario is to copy
 `roles/common/molecule/default/` and adjust the role name.
 
-**`molecule.yml`** — `driver: default`; one platform named `lab`; a galaxy
+**`molecule.yml`** — `driver: default`; one platform named `stage`; a galaxy
 dependency pointing at `../requirements.yml`; `provisioner.playbooks` wiring the
 three shared playbooks; `ANSIBLE_ROLES_PATH` set to the roles directory; and
 `verifier: ansible`:
@@ -82,7 +82,7 @@ driver:
   name: default
 
 platforms:
-  - name: lab
+  - name: stage
 
 dependency:
   name: galaxy

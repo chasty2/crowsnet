@@ -5,6 +5,10 @@ without a live Pulumi engine.
 """
 
 STAGE_VMS = [
+    {"name": "stage",  "vmid": 250, "cpu": 2, "ram": 4096,  "ip": "192.168.4.250", "mac": "BC:24:11:1D:90:74", "clone": True, "template": "small"},
+]
+
+DEV_VMS = [
     {"name": "lab",    "vmid": 200, "cpu": 2, "ram": 4096,  "ip": "192.168.4.200", "mac": "CA:9B:F1:85:90:C0", "clone": True, "template": "small"},
 ]
 
@@ -20,6 +24,8 @@ def select_vms(stack: str) -> list[dict]:
     """Return the VM definitions for a stack, rejecting unknown stacks."""
     if stack == "stage":
         return STAGE_VMS
+    if stack == "dev":
+        return DEV_VMS
     if stack == "prod":
         return PROD_VMS
-    raise ValueError(f"Unknown stack '{stack}'. Expected 'stage' or 'prod'.")
+    raise ValueError(f"Unknown stack '{stack}'. Expected 'stage', 'dev', or 'prod'.")
