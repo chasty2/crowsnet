@@ -38,6 +38,7 @@ class ProxmoxVM(pulumi.ComponentResource):
             cpu=proxmox.vm.VirtualMachineCpuArgs(
                 cores=cpu,
                 sockets=1,
+                type="host",
             ),
             memory=proxmox.vm.VirtualMachineMemoryArgs(
                 dedicated=ram,
