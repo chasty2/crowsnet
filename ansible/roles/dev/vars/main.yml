@@ -7,5 +7,4 @@ dev_claude_keyring: /etc/apt/keyrings/claude-code.asc
 dev_claude_repo: "deb [signed-by={{ dev_claude_keyring }}] https://downloads.claude.ai/claude-code/apt/stable stable main"
 
 dev_secrets_mount: /mnt/secrets
-dev_secrets_src: "{{ nfs_server }}:/ssd_mirror/secrets"
 dev_secrets_user: chasty2
