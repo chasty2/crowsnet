@@ -13,9 +13,9 @@
 ./crowsnet.py build                        # Build the CrowsNet container
 
 # Infrastructure (Pulumi)
-./crowsnet.py deploy <stage|prod>          # Deploy infrastructure
-./crowsnet.py destroy <stage|prod>         # Destroy infrastructure
-./crowsnet.py refresh <stage|prod>         # Refresh infrastructure state
+./crowsnet.py deploy <stage|dev|prod>      # Deploy infrastructure
+./crowsnet.py destroy <stage|dev|prod>     # Destroy infrastructure
+./crowsnet.py refresh <stage|dev|prod>     # Refresh infrastructure state
 
 # Configuration (Ansible)
 ./crowsnet.py configure                    # Full site deployment
@@ -39,7 +39,7 @@ The suite has two layers (a third, CI on a self-hosted runner, is still pending)
 - **Unit (pytest)** — fast, host-only, no infrastructure. Covers the Click CLI
   dispatch, podman command construction, and Pulumi component logic. Lives in
   `tests/`. Run on every change via `./crowsnet.py test`.
-- **Integration (Molecule)** — provisions the real `stage` lab VM via Pulumi,
+- **Integration (Molecule)** — provisions the real `stage` VM via Pulumi,
   converges a role, checks idempotency, then tears the VM down (destroy always
   runs last, even on failure). Run when changing an Ansible role via
   `./crowsnet.py test --integration [--role <role>]`. Runs inside the ops

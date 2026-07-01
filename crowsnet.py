@@ -19,21 +19,21 @@ def build():
 
 
 @cli.command()
-@click.argument("stack", type=click.Choice(["stage", "prod"]))
+@click.argument("stack", type=click.Choice(["stage", "dev", "prod"]))
 def deploy(stack):
     """Deploy infrastructure with Pulumi."""
     sys.exit(run_container("deploy", [stack]))
 
 
 @cli.command()
-@click.argument("stack", type=click.Choice(["stage", "prod"]))
+@click.argument("stack", type=click.Choice(["stage", "dev", "prod"]))
 def destroy(stack):
     """Destroy infrastructure with Pulumi."""
     sys.exit(run_container("destroy", [stack]))
 
 
 @cli.command()
-@click.argument("stack", type=click.Choice(["stage", "prod"]))
+@click.argument("stack", type=click.Choice(["stage", "dev", "prod"]))
 def refresh(stack):
     """Refresh infrastructure state with Pulumi."""
     sys.exit(run_container("refresh", [stack]))
