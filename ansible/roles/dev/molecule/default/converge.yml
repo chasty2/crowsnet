@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars_files:
+    - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../group_vars/all"
+  roles:
+    - common # noqa syntax-check[specific]
+    - dev # noqa syntax-check[specific]

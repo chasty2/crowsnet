@@ -1,0 +1,21 @@
+---
+# The local mode below is cosmetic; NFS overlays it once mounted.
+- name: Service Config Block
+  become: true
+  tags: services
+  block:
+    - name: Create {{ dev_secrets_mount }}
+      ansible.builtin.file:
+        path: "{{ dev_secrets_mount }}"
+        state: directory
+        owner: "{{ dev_secrets_user }}"
+        group: "{{ dev_secrets_user }}"
+        mode: "0770"
+
+    - name: Mount secrets NFS volume
+      ansible.posix.mount:
+        src: 192.168.4.11:/ssd_mirror/secrets
+        path: "{{ dev_secrets_mount }}"
+        opts: rw,sync,hard
+        state: mounted
+        fstype: nfs

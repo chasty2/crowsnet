@@ -1,0 +1,9 @@
+---
+# tasks file for dev role
+- name: Package Config
+  ansible.builtin.include_tasks: dev_packages.yml
+  tags: packages
+
+- name: Service Config
+  ansible.builtin.include_tasks: dev_services.yml
+  tags: services

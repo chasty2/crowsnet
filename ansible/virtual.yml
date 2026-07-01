@@ -15,22 +15,20 @@
     - public_ssh
 
 # As of now, all applications depend on podman role
-# - name: DNS & Database Server
-#   hosts: library
-#   roles:
-#     - podman
-#     - postgres
-#     - pihole
-
 - name: Web Proxy
   hosts: proxy
   roles:
     - podman
     - proxy
 
-- name: Web services
+- name: Web Services
   hosts: bailey
   roles:
     - podman
     - jellyfin
     - foundry
+
+- name: Development
+  hosts: lab
+  roles:
+    - dev
