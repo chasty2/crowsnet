@@ -1,0 +1,24 @@
+---
+# Mount the secrets share for the human admin user.
+# Access is restricted to chasty2 by the server-side export (0770 chasty2:chasty2
+# with root_squash) — the podman and ansible service users fall under "other" and
+# are denied. The local mode below is cosmetic; NFS overlays it once mounted.
+- name: Service Config Block
+  become: true
+  tags: services
+  block:
+    - name: Create {{ dev_secrets_mount }}
+      ansible.builtin.file:
+        path: "{{ dev_secrets_mount }}"
+        state: directory
+        owner: "{{ dev_secrets_user }}"
+        group: "{{ dev_secrets_user }}"
+        mode: "0770"
+
+    - name: Mount secrets NFS volume
+      ansible.posix.mount:
+        src: "{{ dev_secrets_src }}"
+        path: "{{ dev_secrets_mount }}"
+        opts: rw,sync,hard
+        state: mounted
+        fstype: nfs

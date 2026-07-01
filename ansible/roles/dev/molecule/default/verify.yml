@@ -1,0 +1,38 @@
+---
+# Minimal smoke checks for the dev role. Idempotency is verified separately by
+# molecule's built-in `idempotence` step, not here.
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+
+    - name: Assert the claude-code package is installed
+      ansible.builtin.assert:
+        that:
+          - "'claude-code' in ansible_facts.packages"
+        fail_msg: "claude-code apt package is not installed"
+
+    - name: Locate the claude binary on PATH
+      ansible.builtin.command: which claude
+      changed_when: false
+
+    - name: Stat the secrets mountpoint
+      ansible.builtin.stat:
+        path: /mnt/secrets
+      register: dev_secrets_stat
+
+    - name: Assert /mnt/secrets is owned by chasty2 with mode 0770
+      ansible.builtin.assert:
+        that:
+          - dev_secrets_stat.stat.isdir
+          - dev_secrets_stat.stat.pw_name == "chasty2"
+          - dev_secrets_stat.stat.gr_name == "chasty2"
+          - dev_secrets_stat.stat.mode == "0770"
+        fail_msg: "/mnt/secrets is not a chasty2-owned 0770 directory"
+
+    - name: Assert /mnt/secrets is a mountpoint
+      ansible.builtin.command: mountpoint -q /mnt/secrets
+      changed_when: false

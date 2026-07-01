@@ -34,3 +34,8 @@
     - podman
     - jellyfin
     - foundry
+
+- name: Claude sandbox
+  hosts: lab
+  roles:
+    - dev

@@ -1,0 +1,33 @@
+---
+# Idempotent Claude Code install from Anthropic's signed apt repository
+- name: Package Config Block
+  become: true
+  tags: packages
+  block:
+    - name: Create apt keyrings directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Add Claude Code apt signing key
+      ansible.builtin.get_url:
+        url: "{{ dev_claude_key_url }}"
+        dest: "{{ dev_claude_keyring }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Add Claude Code apt repository
+      ansible.builtin.apt_repository:
+        repo: "{{ dev_claude_repo }}"
+        filename: claude-code
+        state: present
+
+    - name: Install Claude Code
+      ansible.builtin.apt:
+        name: claude-code
+        state: present
+        update_cache: true
