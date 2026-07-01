@@ -32,6 +32,7 @@ A description of the settable variables for this role should go here, including 
       weekday: "1",
       job: "proxmox-backup-client backup media.pxar:/hdd_mirror/media 
   }
+- proxmox_pbs_repository: Vaulted string identifying the Proxmox Backup Server (PBS) repository that the backup script targets
 - proxmox_pbs_password: Vaulted string used to connect to Proxmox Backup Server (PBS)
 
 *vars used in group_vars/all:*
@@ -57,4 +58,4 @@ GPL 3.0
 Author Information
 ------------------
 
-Cody Hasty, inspired by https://github.com/8grams/ansible-microk8s/blob/main/install_microk8s.yaml
+Cody Hasty
