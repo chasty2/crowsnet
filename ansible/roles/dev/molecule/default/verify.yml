@@ -1,6 +1,4 @@
 ---
-# Minimal smoke checks for the dev role. Idempotency is verified separately by
-# molecule's built-in `idempotence` step, not here.
 - name: Verify
   hosts: all
   become: true
