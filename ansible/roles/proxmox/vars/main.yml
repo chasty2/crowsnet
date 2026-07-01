@@ -21,10 +21,8 @@ proxmox_nfs_mounts:
       group: podman, mode: "0770" }
   - { path: "/ssd_mirror/foundry", owner: podman,
       group: podman, mode: "0770" }
-  # 0700 + chasty2 ownership locks out the podman and ansible service
-  # users so only the operator can read secret files served over NFS
   - { path: "/ssd_mirror/secrets", owner: chasty2,
-      group: chasty2, mode: "0700" }
+      group: chasty2, mode: "0770" }
 
 # 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 proxmox_cron_jobs:
