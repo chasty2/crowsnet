@@ -1,4 +1,7 @@
 {
+  "attribution": {
+    "commit": ""
+  },
   "permissions": {
     "allow": [
       "Bash(git checkout:*)",
@@ -7,10 +10,13 @@
       "Bash(./crowsnet.py build:*)",
       "Bash(./crowsnet.py test:*)",
       "Bash(gh issue:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git push:*)"
     ],
     "deny": [
-      "Bash(./crowsnet.py destroy:*)"
+      "Bash(./crowsnet.py destroy:*)",
+      "Bash(git push * main)",
+      "Bash(git push origin main)"
     ]
   }
 }
