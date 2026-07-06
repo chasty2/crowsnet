@@ -79,6 +79,8 @@ crowsnet/
 - Commit early and often, after each meaningful change
 - Always run the testing workflow and have it pass before committing
 - After pushing a branch, check that its CI tests pass (e.g. `gh run list --branch <branch>`)
+- Pushes to `main` are blocked by a pre-push hook; enable it once per clone with
+  `git config core.hooksPath .githooks`
 - When done, check in with the user for approval
 - Submit a PR to merge into main with a semantic tag in the title (e.g., `feat:`, `fix:`, `refactor:`, `docs:`)
 
