@@ -1,8 +1,7 @@
 # .github/workflows/test.yml
 name: test
 on:
-  pull_request:
-    branches: ["main"]
+  push:
 jobs:
   pytest:
     name: Pytest # Naming the build is important to use it as a status check
