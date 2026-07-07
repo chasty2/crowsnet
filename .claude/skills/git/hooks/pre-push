@@ -1,0 +1,9 @@
+#!/bin/sh
+# Block pushes to main; Claude works on branches only.
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    echo "pre-push: pushing to 'main' is blocked." >&2
+    exit 1
+  fi
+done
+exit 0
