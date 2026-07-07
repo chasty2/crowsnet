@@ -73,16 +73,9 @@ crowsnet/
 
 ## Git Conventions
 
-- Unless told otherwise, start each plan with creating a new branch
-- All work should be done in a branch outside of main
-- Each goal should be accomplished in its own branch
-- Commit early and often, after each meaningful change
-- When applicable, run the integration testing workflow and have it pass before committing
-- After pushing a branch, check that its CI tests pass (e.g. `gh run list --branch <branch>`)
-- Pushes to `main` are blocked by a pre-push hook; enable it once per clone with
-  `git config core.hooksPath .githooks`
-- When done, check in with the user for approval
-- Submit a PR to merge into main with a semantic tag in the title (e.g., `feat:`, `fix:`, `refactor:`, `docs:`)
+- Follow the `git` skill (`.claude/skills/git/SKILL.md`) for all branch, commit, PR, and merge work
+- Unless told otherwise, start each plan by creating a new branch; never work on `main`
+- When done, check in with the user for approval before merging
 
 
 ## Before You Start
