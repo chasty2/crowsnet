@@ -19,14 +19,17 @@ description: Git workflow conventions for this repo. Use when creating branches,
 
 ## Commits
 
-- Commit early and often as you work. One commit does one thing — keep each
-  focused on a single concern
-- A comma in the subject is often a smell that two changes are bundled; when it
-  is, split them into separate commits
-- Keep messages concise: the subject states *what* changed
-- Add a body only when the *why* isn't obvious (complex or surprising changes)
-- Commits get squashed on merge — the PR is the durable record, so don't
-  duplicate PR-level detail in commit messages
+- Commit early and often, and default to splitting: a change spanning several
+  files or layers is usually several commits. Squash-on-merge (see Merging)
+  means intermediate commits needn't build or pass, so splitting is cheap —
+  "each commit should work alone" is no reason to bundle
+- Split by the *reason* for each change: a dependency bump, wiring it into the
+  image, and a config tweak are separate commits even when shipped together.
+  Tests ride with the code they cover
+- If the subject needs "and", a comma, or a list, it is likely more than one commit —
+  stage the pieces with `git add -p` and commit each separately
+- Subject states *what* changed; add a body only when the *why* isn't obvious
+- The PR is the durable record, so don't repeat PR-level detail in commits
 
 ## Pull Requests
 
