@@ -71,15 +71,9 @@ crowsnet/
 7. **Use uv for Python** - Invoke all Python tooling through `uv` (e.g. `uv run pytest`, `uv run python ...`, `uv pip ...`); never bare `python`/`pip`/`pytest`
 
 
-## Git Conventions
-
-- Follow the `git` skill (`.claude/skills/git/SKILL.md`) for all branch, commit, PR, and merge work
-- Unless told otherwise, start each plan by creating a new branch; never work on `main`
-- When done, check in with the user for approval before merging
-
-
 ## Before You Start
 
 | File | When to Read |
 |------|--------------|
+| .claude/skills/git/SKILL.md | Before planning any code changes |
 | ansible/CLAUDE.md | Writing new Ansible and Ansible-related code |
