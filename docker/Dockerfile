@@ -51,7 +51,7 @@ ENV ANSIBLE_GATHERING=smart
 ENV ANSIBLE_RETRY_FILES_ENABLED=false
 ENV ANSIBLE_PYTHON_INTERPRETER=auto_silent
 
-# Install pinned Ansible collections (ansible-core ships none bundled)
+# Install pinned Ansible collections
 COPY --chown=ansible:ansible requirements.yml /app/requirements.yml
 RUN ansible-galaxy collection install -r /app/requirements.yml
 
