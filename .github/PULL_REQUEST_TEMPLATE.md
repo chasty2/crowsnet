@@ -6,8 +6,10 @@
 
 <!-- Bullet list of notable changes -->
 
-## Testing
+## Validation
 
 <!-- How this was verified (integration tests, manual checks, CI) -->
 
-Closes #
+## References
+
+<!-- Mention and/or close related issues, link(s) to docs when applicable -->
