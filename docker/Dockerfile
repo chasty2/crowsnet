@@ -51,8 +51,9 @@ ENV ANSIBLE_GATHERING=smart
 ENV ANSIBLE_RETRY_FILES_ENABLED=false
 ENV ANSIBLE_PYTHON_INTERPRETER=auto_silent
 
-# Upgrade podman collection (fix: nfs bind mount idempotency)
-RUN ansible-galaxy collection install --upgrade containers.podman
+# Install pinned Ansible collections
+COPY --chown=ansible:ansible requirements.yml /app/requirements.yml
+RUN ansible-galaxy collection install -r /app/requirements.yml
 
 # Set entrypoint
 COPY --chown=ansible:ansible ./entrypoint.sh /entrypoint.sh

@@ -16,20 +16,24 @@ CONTAINER_NAME = "crowsnet"
 def build_container() -> int:
     """Build the crowsnet container with podman.
 
-    Copies pyproject.toml and uv.lock into the docker build context,
-    builds the container, then cleans up the copied files.
+    Copies pyproject.toml, uv.lock, and the Ansible collection requirements
+    into the docker build context, builds the container, then cleans up the
+    copied files.
 
     Returns:
         The return code from podman build.
     """
     pyproject_src = PROJECT_ROOT / "pyproject.toml"
     uvlock_src = PROJECT_ROOT / "uv.lock"
+    requirements_src = ANSIBLE_DIR / "roles" / "requirements.yml"
     pyproject_dst = DOCKER_DIR / "pyproject.toml"
     uvlock_dst = DOCKER_DIR / "uv.lock"
+    requirements_dst = DOCKER_DIR / "requirements.yml"
 
     try:
         shutil.copy2(pyproject_src, pyproject_dst)
         shutil.copy2(uvlock_src, uvlock_dst)
+        shutil.copy2(requirements_src, requirements_dst)
 
         cmd = ["podman", "build", ".", "-t", f"{CONTAINER_NAME}:latest"]
         result = subprocess.run(cmd, cwd=DOCKER_DIR, check=False)
@@ -37,6 +41,7 @@ def build_container() -> int:
     finally:
         pyproject_dst.unlink(missing_ok=True)
         uvlock_dst.unlink(missing_ok=True)
+        requirements_dst.unlink(missing_ok=True)
 
 
 def run_container(action: str, args: list[str] | None = None) -> int:
