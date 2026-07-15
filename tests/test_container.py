@@ -78,13 +78,13 @@ def test_build_container_copies_and_cleans_up(mocker):
     rc = container.build_container()
 
     assert rc == 0
-    # pyproject.toml and uv.lock copied into the docker build context
-    assert copy.call_count == 2
+    # pyproject.toml, uv.lock, and requirements.yml copied into the build context
+    assert copy.call_count == 3
     # build runs from the docker dir
     assert recorder["cwd"] == container.DOCKER_DIR
     assert recorder["cmd"][:3] == ["podman", "build", "."]
-    # both copied files cleaned up afterward
-    assert unlink.call_count == 2
+    # all copied files cleaned up afterward
+    assert unlink.call_count == 3
 
 
 def test_build_container_cleans_up_on_failure(mocker):
@@ -100,4 +100,4 @@ def test_build_container_cleans_up_on_failure(mocker):
         pass
 
     # finally block still removes the copied files
-    assert unlink.call_count == 2
+    assert unlink.call_count == 3
