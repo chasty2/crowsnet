@@ -1,34 +1,20 @@
-Role Name
-=========
+# MicroK8s Role
 
-Install microk8s on a Ubuntu machine
+Installs [MicroK8s](https://microk8s.io/) on `kube-1` and grants the configured users
+cluster access.
 
-Requirements
-------------
+## Requirements
+- `common` role
+- `community.general` collection
+- Ubuntu host with `snapd` available
 
-- community.general
+## Variables
+- `microk8s_packages` - Snaps to install (`microk8s`, classic confinement, channel `1.32`)
+- `microk8s_users` - Users added to the `microk8s` group and given a `~/.kube` directory
 
-Role Variables
---------------
+## Tags
+- `packages` - MicroK8s snap installation
+- `users` - Group membership and `~/.kube` cache directory
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: lab
-      roles:
-         - microk8s
-
-License
--------
-
-GPL 3.0
-
-Author Information
-------------------
-
-Cody Hasty, inspired by https://github.com/8grams/ansible-microk8s/blob/main/install_microk8s.yaml
+Inspired by
+<https://github.com/8grams/ansible-microk8s/blob/main/install_microk8s.yaml>.
