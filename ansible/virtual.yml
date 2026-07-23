@@ -32,3 +32,8 @@
   hosts: lab
   roles:
     - dev
+
+- name: MicroK8s
+  hosts: kube-1
+  roles:
+    - microk8s
