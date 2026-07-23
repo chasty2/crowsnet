@@ -9,7 +9,3 @@ report guest IPs and perform clean shutdowns.
 ## Variables
 - `virtual_packages` - Guest tooling to install (`qemu-guest-agent`, also baked into the VM template)
 - `virtual_services` - Services started and enabled on boot
-
-## Tags
-- `packages` - Guest agent installation
-- `services` - Guest agent service management

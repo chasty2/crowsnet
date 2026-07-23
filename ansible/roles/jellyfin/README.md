@@ -16,9 +16,3 @@ hypervisor, so container data outlives the VM.
 
 From `group_vars/all`:
 - `nfs_server` - Host the group membership change is delegated to, so NFS ownership stays in sync
-
-## Tags
-- `users` - Adds `jellyfin_users` to the `podman` group here and on the NFS server
-- `services` - Mounts `/mnt/jellyfin` and `/mnt/media`, creates the `cache` and `config`
-  bind targets, starts the container on the host network
-- `firewall` - Opens the Jellyfin web port on the `internal` zone

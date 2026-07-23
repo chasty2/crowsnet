@@ -11,6 +11,3 @@ hypervisor.
 
 ## Variables
 - `pbs_permitted_ports` - firewalld ports on the `internal` zone (`8007/tcp`, backups and web portal)
-
-## Tags
-- `firewall` - Opens the PBS port on the `internal` zone

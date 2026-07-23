@@ -110,8 +110,9 @@ NIC on `vmbr0` with a fixed MAC, and a cloud-init (`nocloud`) static IP on
 
 Each role splits its work across up to five task files with matching tags — `users`,
 `system`, `packages`, `services`, and `firewall` — so any slice of the configuration can
-be applied on its own. Every role carries a README describing its variables and tags; the
-authoring conventions are in [`ansible/CLAUDE.md`](ansible/CLAUDE.md). Shared variables
+be applied on its own. Every role carries a README describing its purpose, requirements,
+and variables; the authoring conventions are in
+[`ansible/CLAUDE.md`](ansible/CLAUDE.md). Shared variables
 live in `ansible/group_vars/all` and collection versions are pinned in
 [`ansible/roles/requirements.yml`](ansible/roles/requirements.yml).
 

@@ -12,7 +12,3 @@ accepts inbound SSH from the internet.
 
 The jail itself is the static `files/jail_sshd`, installed to
 `/etc/fail2ban/jail.d/sshd.local`.
-
-## Tags
-- `services` - Installs the sshd jail and reloads fail2ban
-- `firewall` - Opens SSH on the `public` zone

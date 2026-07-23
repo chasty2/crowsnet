@@ -25,11 +25,3 @@ Server.
 From `group_vars/all`:
 - `admin_users` - Admin accounts added to the `podman` group so they can read container
   data, as `{ name, uid, gid }`
-
-## Tags
-- `users` - Adds admin users to the `podman` group and installs `/root/backup.sh` from
-  `templates/backup_script.j2`
-- `packages` - NFS server installation
-- `services` - Creates the exported directories, renders `/etc/exports`, schedules the
-  backup cron jobs, enables the NFS server
-- `firewall` - Opens the web UI and NFS ports on the `internal` zone

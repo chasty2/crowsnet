@@ -18,9 +18,3 @@ rebuild.
 
 From `group_vars/all`:
 - `nfs_server` - Host the group membership change is delegated to, so NFS ownership stays in sync
-
-## Tags
-- `users` - Adds `proxy_users` to the `podman` group here and on the NFS server
-- `system` - Lowers `net.ipv4.ip_unprivileged_port_start` to 80 so the rootless container can bind 80/443
-- `services` - Mounts `/mnt/proxy`, creates the `data` and `letsencrypt` bind targets, starts the container
-- `firewall` - Opens the admin UI internally and HTTP/HTTPS publicly

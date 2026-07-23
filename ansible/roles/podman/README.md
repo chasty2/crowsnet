@@ -10,8 +10,3 @@ this role running first.
 
 ## Variables
 - `podman_packages` - Packages to install (`podman`)
-
-## Tags
-- `users` - Authorizes the CrowsNet SSH key for the `podman` user and enables
-  systemd lingering so its containers survive logout
-- `packages` - Podman installation

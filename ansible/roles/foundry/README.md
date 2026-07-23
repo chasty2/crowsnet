@@ -17,9 +17,3 @@ Runs [Foundry Virtual Tabletop](https://foundryvtt.com/) as a rootless Podman co
 
 From `group_vars/all`:
 - `nfs_server` - Host the group membership change is delegated to, so NFS ownership stays in sync
-
-## Tags
-- `users` - Adds `foundry_users` to the `podman` group here and on the NFS server
-- `services` - Mounts `/mnt/foundry`, creates the `data` bind target, starts the container
-  with `userns: keep-id` so files stay owned by the `podman` user
-- `firewall` - Opens the Foundry web port on the `internal` zone

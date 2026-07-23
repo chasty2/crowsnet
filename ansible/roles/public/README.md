@@ -16,8 +16,3 @@ restrictive firewalld `public` zone.
 
 Per-jail configuration lives in the `files/jail_local` template installed to
 `/etc/fail2ban/jail.local`; individual jails are added by roles like `public_ssh`.
-
-## Tags
-- `packages` - fail2ban and ipset installation
-- `services` - Removes the Debian default jail config, installs `jail.local`, enables fail2ban
-- `firewall` - Closes unused services and attaches the external interface to the `public` zone

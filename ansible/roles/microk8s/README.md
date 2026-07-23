@@ -12,9 +12,5 @@ cluster access.
 - `microk8s_packages` - Snaps to install (`microk8s`, classic confinement, channel `1.32`)
 - `microk8s_users` - Users added to the `microk8s` group and given a `~/.kube` directory
 
-## Tags
-- `packages` - MicroK8s snap installation
-- `users` - Group membership and `~/.kube` cache directory
-
 Inspired by
 <https://github.com/8grams/ansible-microk8s/blob/main/install_microk8s.yaml>.

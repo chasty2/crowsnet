@@ -21,13 +21,3 @@ establishes the `internal` firewalld zone.
 
 From `group_vars/all`:
 - `admin_users` - Human accounts granted sudo, as `{ name, uid, gid }`
-
-## Tags
-- `users` - Groups, admin and service accounts, sudoers rules, authorized SSH keys
-- `system` - Hostname, set from `inventory_hostname`
-- `packages` - Base package install and removal
-- `services` - sshd drop-in config, timezone, enabling base services
-- `firewall` - `internal` zone ports and permitted source networks
-
-## Testing
-Has a Molecule scenario: `./crowsnet.py test --integration --role common`
