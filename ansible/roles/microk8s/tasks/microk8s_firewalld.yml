@@ -1,0 +1,13 @@
+---
+- name: Firewall Config Block
+  become: true
+  tags: firewall
+  block:
+    - name: Open permitted ports on firewalld zone 'internal'
+      ansible.posix.firewalld:
+        zone: internal
+        port: "{{ item }}"
+        state: enabled
+        permanent: true
+        immediate: true
+      with_items: "{{ microk8s_permitted_ports }}"

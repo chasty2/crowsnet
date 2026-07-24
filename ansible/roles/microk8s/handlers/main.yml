@@ -1,2 +1,9 @@
 ---
 # handlers file for microk8s
+- name: Verify kubectl access on development servers
+  become: true
+  become_user: "{{ microk8s_user }}"
+  ansible.builtin.command: kubectl get nodes
+  changed_when: false
+  delegate_to: "{{ item }}"
+  loop: "{{ development_servers }}"
