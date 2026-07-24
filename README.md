@@ -75,7 +75,7 @@ configuration can be applied on its own. The authoring conventions are in
 ```bash
 ./crowsnet.py configure                    # full site deployment
 ./crowsnet.py configure --tags users       # run specific tags
-./crowsnet.py configure --limit gate       # limit to specific host
+./crowsnet.py configure --limit gate       # limit to specific host(s)
 ./crowsnet.py configure --check            # dry-run mode
 ./crowsnet.py update                       # patch and reboot all VMs
 ```
@@ -100,3 +100,5 @@ The suite has two layers (a third, CI on a self-hosted runner, is still pending)
 ./crowsnet.py test --integration                  # integration suite (role: common)
 ./crowsnet.py test --integration --role <role>    # integration suite for a specific role
 ```
+
+CI/CD is done via GitHub Actions
