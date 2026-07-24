@@ -23,7 +23,7 @@ and heavy compute
 | `proxy` | VM | Nginx Proxy Manager; terminates HTTP/HTTPS for public services |
 | `bailey` | VM | Web services: Jellyfin and FoundryVTT |
 | `kube-1` | VM | MicroK8s node |
-| `lab` | VM | Development sandbox |
+| `lab` | VM | Development sandbox for concurrent Claude code instances |
 | `stage` | VM | Ephemeral VM used only by the integration test suite |
 
 
