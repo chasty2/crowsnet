@@ -14,7 +14,7 @@ Three physical machines host everything. Proxmox VE runs the VMs, which are back
 a separate machine running Proxmox Backup Server. A GPU workstation handles development
 and heavy compute
 
-| Host | Type | Role |
+| Host | Type | Description |
 |------|------|------|
 | `esper` | Physical | Proxmox VE hypervisor; NFS server for container data; nightly backups to PBS |
 | `simic` | Physical | Proxmox Backup Server |
