@@ -17,6 +17,6 @@
 #   ansible.builtin.include_tasks: services.yml
 #   tags: services
 
-# - name: Firewall Config
-#   ansible.builtin.include_tasks: firewalld.yml
-#   tags: firewall
+- name: Firewall Config
+  ansible.builtin.include_tasks: microk8s_firewalld.yml
+  tags: firewall
