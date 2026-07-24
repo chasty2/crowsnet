@@ -1,36 +1,13 @@
-Role Name
-=========
+# PBS Role
 
-Configure Proxmox Backup Server
+Configures the Proxmox Backup Server host (`simic`) by opening the port its web UI and
+backup clients use. The backup jobs themselves are scheduled by the `proxmox` role on the
+hypervisor.
 
-Requirements
-------------
-
-- Host is running firewalld (installed in common role)
+## Requirements
+- `common` role (firewalld)
+- `ansible.posix` collection
 - Host is running Proxmox Backup Server
 
-Role Variables
---------------
-
-backup_permitted_ports: List of ports to open on firewalld
-
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: lab
-      roles:
-         - common
-         - pbs
-
-License
--------
-
-GPL 3.0
-
-Author Information
-------------------
-
-Cody Hasty
+## Variables
+- `pbs_permitted_ports` - firewalld ports on the `internal` zone (`8007/tcp`, backups and web portal)

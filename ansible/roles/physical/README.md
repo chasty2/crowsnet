@@ -2,8 +2,6 @@
 
 Configures physical machines with hardware monitoring tools.
 
-## Packages Installed
-- `lm_sensors` - Hardware monitoring (CPU/motherboard temps, fan speeds)
-
-## Tags
-- `packages` - Package installation
+## Variables
+- `physical_packages` - Monitoring packages to install (`lm-sensors`, for CPU/motherboard
+  temperatures and fan speeds)
