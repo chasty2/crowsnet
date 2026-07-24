@@ -1,8 +1,8 @@
 # Dev Role
 
-Sets up the development sandbox (`lab`): installs Claude Code and kubectl from their
-respective signed apt repositories, installs baseline dev packages (git), and mounts
-the shared secrets volume.
+Sets up the development sandbox (`lab`): installs the dev packages, including Claude
+Code and kubectl from their respective signed apt repositories, and mounts the shared
+secrets volume.
 
 ## Requirements
 - `common` role
@@ -11,7 +11,7 @@ the shared secrets volume.
 - Debian-family host
 
 ## Variables
-- `dev_packages` - Baseline apt packages to install (`git`)
+- `dev_packages` - Apt packages to install on the dev host
 - `dev_claude_key_url` - Anthropic apt signing key to fetch
 - `dev_claude_keyring` - Where that key is stored (`/etc/apt/keyrings/claude-code.asc`)
 - `dev_claude_repo` - The apt source line, signed by the keyring above

@@ -3,6 +3,8 @@
 
 dev_packages:
   - git
+  - claude-code
+  - kubectl
 
 dev_claude_key_url: https://downloads.claude.ai/keys/claude-code.asc
 dev_claude_keyring: /etc/apt/keyrings/claude-code.asc

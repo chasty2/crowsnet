@@ -1,5 +1,6 @@
 ---
-# Idempotent Claude Code install from Anthropic's signed apt repository
+# Adds the Claude Code and Kubernetes signed apt repositories, then installs
+# the dev packages (see dev_packages) from them in a single apt call.
 - name: Package Config Block
   become: true
   tags: packages
@@ -11,12 +12,6 @@
         owner: root
         group: root
         mode: "0755"
-
-    - name: Install dev packages
-      ansible.builtin.apt:
-        name: "{{ item }}"
-        state: present
-      with_items: "{{ dev_packages }}"
 
     - name: Add Claude Code apt signing key
       ansible.builtin.get_url:
@@ -32,12 +27,6 @@
         filename: claude-code
         state: present
 
-    - name: Install Claude Code
-      ansible.builtin.apt:
-        name: claude-code
-        state: present
-        update_cache: true
-
     - name: Add Kubernetes apt signing key
       ansible.builtin.get_url:
         url: "{{ dev_kubectl_key_url }}"
@@ -52,8 +41,8 @@
         filename: kubernetes
         state: present
 
-    - name: Install kubectl
+    - name: Install dev packages
       ansible.builtin.apt:
-        name: kubectl
+        name: "{{ dev_packages }}"
         state: present
         update_cache: true
