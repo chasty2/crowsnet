@@ -7,14 +7,20 @@
     - name: Gather package facts
       ansible.builtin.package_facts:
 
-    - name: Assert the claude-code package is installed
+    - name: Assert the expected apt packages are installed
       ansible.builtin.assert:
         that:
           - "'claude-code' in ansible_facts.packages"
-        fail_msg: "claude-code apt package is not installed"
+          - "'git' in ansible_facts.packages"
+          - "'kubectl' in ansible_facts.packages"
+        fail_msg: "an expected apt package (claude-code, git, kubectl) is not installed"
 
     - name: Locate the claude binary on PATH
       ansible.builtin.command: which claude
+      changed_when: false
+
+    - name: Locate the kubectl binary on PATH
+      ansible.builtin.command: which kubectl
       changed_when: false
 
     - name: Stat the secrets mountpoint

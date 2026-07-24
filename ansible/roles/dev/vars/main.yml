@@ -1,9 +1,16 @@
 ---
 # vars file for dev role
 
+dev_packages:
+  - git
+
 dev_claude_key_url: https://downloads.claude.ai/keys/claude-code.asc
 dev_claude_keyring: /etc/apt/keyrings/claude-code.asc
 dev_claude_repo: "deb [signed-by={{ dev_claude_keyring }}] https://downloads.claude.ai/claude-code/apt/stable stable main"
+
+dev_kubectl_key_url: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
+dev_kubectl_keyring: /etc/apt/keyrings/kubernetes-apt-keyring.asc
+dev_kubectl_repo: "deb [signed-by={{ dev_kubectl_keyring }}] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /"
 
 dev_secrets_mount: /mnt/secrets
 dev_secrets_user: chasty2

@@ -12,6 +12,12 @@
         group: root
         mode: "0755"
 
+    - name: Install dev packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      with_items: "{{ dev_packages }}"
+
     - name: Add Claude Code apt signing key
       ansible.builtin.get_url:
         url: "{{ dev_claude_key_url }}"
@@ -29,5 +35,25 @@
     - name: Install Claude Code
       ansible.builtin.apt:
         name: claude-code
+        state: present
+        update_cache: true
+
+    - name: Add Kubernetes apt signing key
+      ansible.builtin.get_url:
+        url: "{{ dev_kubectl_key_url }}"
+        dest: "{{ dev_kubectl_keyring }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Add Kubernetes apt repository
+      ansible.builtin.apt_repository:
+        repo: "{{ dev_kubectl_repo }}"
+        filename: kubernetes
+        state: present
+
+    - name: Install kubectl
+      ansible.builtin.apt:
+        name: kubectl
         state: present
         update_cache: true
