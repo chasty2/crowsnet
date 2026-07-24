@@ -19,6 +19,7 @@ common_ssh_keys:
   - { name: "ansible", public_ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGj0KFGQuRcbeX+P9z/O+nYDSu7NRSCx0BMDg5TwF5QJ CrowsNet ansible user" }
 
 common_packages:
+  - acl
   - sudo
   - vim
   - nmap
