@@ -80,10 +80,10 @@ configuration can be applied on its own. The authoring conventions are in
 ./crowsnet.py update                       # patch and reboot all VMs
 ```
 
-## Deployment via Container
+## Ops Container
 
 Ansible and Pulumi both run inside one Docker image. This allows for reproducible runs
-across different machines
+across different machines. This container is deployed from the CLI via [crowsnet.py](crowsnet.py)
 
 ## Testing
 
