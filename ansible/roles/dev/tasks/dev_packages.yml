@@ -1,6 +1,4 @@
 ---
-# Adds the Claude Code and Kubernetes signed apt repositories, then installs
-# the dev packages (see dev_packages) from them in a single apt call.
 - name: Package Config Block
   become: true
   tags: packages
