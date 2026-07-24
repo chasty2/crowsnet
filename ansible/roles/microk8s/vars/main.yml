@@ -3,10 +3,7 @@
 microk8s_packages:
   - microk8s
 
-microk8s_users:
-  - chasty2
-
-microk8s_kubeconfig_user: chasty2
+microk8s_user: chasty2
 
 microk8s_permitted_ports:
   - 16443/tcp  # microk8s kube-apiserver

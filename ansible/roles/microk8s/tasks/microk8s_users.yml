@@ -3,21 +3,19 @@
   become: true
   tags: users
   block:
-    - name: Add user(s) to microk8s group
+    - name: Add user to microk8s group
       ansible.builtin.user:
-        name: "{{ item }}"
+        name: "{{ microk8s_user }}"
         groups: microk8s
         append: true
-      with_items: "{{ microk8s_users }}"
 
-    - name: Configure access to .kube caching directory(s)
+    - name: Configure access to .kube caching directory
       ansible.builtin.file:
-        path: "/home/{{ item }}/.kube"
-        owner: "{{ item }}"
-        group: "{{ item }}"
+        path: "/home/{{ microk8s_user }}/.kube"
+        owner: "{{ microk8s_user }}"
+        group: "{{ microk8s_user }}"
         mode: "0644"
         state: directory
-      with_items: "{{ microk8s_users }}"
 
     - name: Generate kubeconfig for remote access
       ansible.builtin.command: microk8s config
@@ -26,9 +24,9 @@
 
     - name: Ensure .kube directory exists on development servers
       ansible.builtin.file:
-        path: "/home/{{ microk8s_kubeconfig_user }}/.kube"
-        owner: "{{ microk8s_kubeconfig_user }}"
-        group: "{{ microk8s_kubeconfig_user }}"
+        path: "/home/{{ microk8s_user }}/.kube"
+        owner: "{{ microk8s_user }}"
+        group: "{{ microk8s_user }}"
         mode: "0700"
         state: directory
       delegate_to: "{{ item }}"
@@ -37,9 +35,9 @@
     - name: Copy kubeconfig to development servers
       ansible.builtin.copy:
         content: "{{ microk8s_kubeconfig.stdout }}"
-        dest: "/home/{{ microk8s_kubeconfig_user }}/.kube/config"
-        owner: "{{ microk8s_kubeconfig_user }}"
-        group: "{{ microk8s_kubeconfig_user }}"
+        dest: "/home/{{ microk8s_user }}/.kube/config"
+        owner: "{{ microk8s_user }}"
+        group: "{{ microk8s_user }}"
         mode: "0600"
       delegate_to: "{{ item }}"
       loop: "{{ development_servers }}"
