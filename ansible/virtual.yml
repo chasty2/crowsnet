@@ -31,6 +31,7 @@
 - name: Development
   hosts: lab
   roles:
+    - podman
     - dev
 
 - name: MicroK8s
