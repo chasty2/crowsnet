@@ -23,6 +23,17 @@
       ansible.builtin.command: which kubectl
       changed_when: false
 
+    - name: Locate the uv binaries on PATH
+      ansible.builtin.command: "which {{ item }}"
+      changed_when: false
+      loop:
+        - uv
+        - uvx
+
+    - name: Run uv
+      ansible.builtin.command: uv --version
+      changed_when: false
+
     - name: Stat the secrets mountpoint
       ansible.builtin.stat:
         path: /mnt/secrets

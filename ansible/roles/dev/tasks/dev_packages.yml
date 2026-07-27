@@ -44,3 +44,19 @@
         name: "{{ dev_packages }}"
         state: present
         update_cache: true
+
+    - name: Download the uv installer
+      ansible.builtin.get_url:
+        url: "{{ dev_uv_installer_url }}"
+        dest: "{{ dev_uv_installer_path }}"
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install uv
+      ansible.builtin.command: "{{ dev_uv_installer_path }}"
+      environment:
+        UV_INSTALL_DIR: "{{ dev_uv_install_dir }}"
+        UV_NO_MODIFY_PATH: "1"
+      args:
+        creates: "{{ dev_uv_install_dir }}/uv"
