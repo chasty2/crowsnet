@@ -1,7 +1,8 @@
 # Dev Role
 
 Sets up the development sandbox (`lab`): installs the dev packages, including Claude
-Code and kubectl from their respective signed apt repositories, and mounts the shared
+Code and kubectl from their respective signed apt repositories, installs uv from
+Astral's install script (there is no apt repository for it), and mounts the shared
 secrets volume.
 
 ## Requirements
@@ -18,5 +19,8 @@ secrets volume.
 - `dev_kubectl_key_url` - Kubernetes apt signing key to fetch (pinned to v1.32)
 - `dev_kubectl_keyring` - Where that key is stored (`/etc/apt/keyrings/kubernetes-apt-keyring.asc`)
 - `dev_kubectl_repo` - The kubectl apt source line, signed by the keyring above
+- `dev_uv_installer_url` - Astral install script to fetch
+- `dev_uv_installer_path` - Where that script is stored (`/usr/local/src/uv-install.sh`)
+- `dev_uv_install_dir` - Where `uv` and `uvx` are installed (`/usr/local/bin`)
 - `dev_secrets_mount` - Mount point for the secrets volume (`/mnt/secrets`)
 - `dev_secrets_user` - Owner of the mount point
