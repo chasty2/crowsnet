@@ -13,7 +13,8 @@
           - "'claude-code' in ansible_facts.packages"
           - "'git' in ansible_facts.packages"
           - "'kubectl' in ansible_facts.packages"
-        fail_msg: "an expected apt package (claude-code, git, kubectl) is not installed"
+          - "'gh' in ansible_facts.packages"
+        fail_msg: "an expected apt package (claude-code, git, kubectl, gh) is not installed"
 
     - name: Locate the claude binary on PATH
       ansible.builtin.command: which claude
@@ -21,6 +22,10 @@
 
     - name: Locate the kubectl binary on PATH
       ansible.builtin.command: which kubectl
+      changed_when: false
+
+    - name: Locate the gh binary on PATH
+      ansible.builtin.command: which gh
       changed_when: false
 
     - name: Locate the uv binaries on PATH

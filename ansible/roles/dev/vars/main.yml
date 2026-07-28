@@ -5,6 +5,7 @@ dev_packages:
   - git
   - claude-code
   - kubectl
+  - gh
 
 dev_apt_repos:
   - name: claude-code
@@ -15,6 +16,10 @@ dev_apt_repos:
     key_url: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
     keyring: /etc/apt/keyrings/kubernetes-apt-keyring.asc
     repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.asc] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /"
+  - name: github-cli
+    key_url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
+    keyring: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    repo: "deb [signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main"
 
 dev_uv_installer_url: https://astral.sh/uv/install.sh
 dev_uv_installer_path: /usr/local/src/uv-install.sh
