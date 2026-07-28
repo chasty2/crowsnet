@@ -6,13 +6,15 @@ dev_packages:
   - claude-code
   - kubectl
 
-dev_claude_key_url: https://downloads.claude.ai/keys/claude-code.asc
-dev_claude_keyring: /etc/apt/keyrings/claude-code.asc
-dev_claude_repo: "deb [signed-by={{ dev_claude_keyring }}] https://downloads.claude.ai/claude-code/apt/stable stable main"
-
-dev_kubectl_key_url: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
-dev_kubectl_keyring: /etc/apt/keyrings/kubernetes-apt-keyring.asc
-dev_kubectl_repo: "deb [signed-by={{ dev_kubectl_keyring }}] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /"
+dev_apt_repos:
+  - name: claude-code
+    key_url: https://downloads.claude.ai/keys/claude-code.asc
+    keyring: /etc/apt/keyrings/claude-code.asc
+    repo: "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main"
+  - name: kubernetes
+    key_url: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
+    keyring: /etc/apt/keyrings/kubernetes-apt-keyring.asc
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.asc] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /"
 
 dev_uv_installer_url: https://astral.sh/uv/install.sh
 dev_uv_installer_path: /usr/local/src/uv-install.sh
