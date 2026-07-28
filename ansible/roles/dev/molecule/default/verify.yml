@@ -10,23 +10,21 @@
     - name: Assert the expected apt packages are installed
       ansible.builtin.assert:
         that:
-          - "'claude-code' in ansible_facts.packages"
-          - "'git' in ansible_facts.packages"
-          - "'kubectl' in ansible_facts.packages"
-        fail_msg: "an expected apt package (claude-code, git, kubectl) is not installed"
+          - "item in ansible_facts.packages"
+        fail_msg: "expected apt package {{ item }} is not installed"
+      loop:
+        - claude-code
+        - git
+        - kubectl
+        - gh
 
-    - name: Locate the claude binary on PATH
-      ansible.builtin.command: which claude
-      changed_when: false
-
-    - name: Locate the kubectl binary on PATH
-      ansible.builtin.command: which kubectl
-      changed_when: false
-
-    - name: Locate the uv binaries on PATH
+    - name: Locate expected binaries on PATH
       ansible.builtin.command: "which {{ item }}"
       changed_when: false
       loop:
+        - claude
+        - kubectl
+        - gh
         - uv
         - uvx
 
