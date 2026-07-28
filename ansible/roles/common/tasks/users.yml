@@ -56,9 +56,13 @@
       with_items: "{{ common_ssh_keys }}"
 
     - name: Enable fzf bash integration for admin users
-      ansible.builtin.lineinfile:
+      ansible.builtin.blockinfile:
         path: "/home/{{ item.name }}/.bashrc"
-        line: 'eval "$(fzf --bash)"'
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - fzf"
+        block: |
+
+          # fzf: fuzzy-finder shell integration (completion + keybindings)
+          eval "$(fzf --bash)"
         owner: "{{ item.name }}"
         group: "{{ item.gid }}"
         create: false
