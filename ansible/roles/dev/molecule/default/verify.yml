@@ -33,6 +33,7 @@
         - uv
         - uvx
         - docker
+        - pulumi
 
     - name: Run uv
       ansible.builtin.command: uv --version
@@ -58,6 +59,12 @@
         that:
           - "'chasty2' in ansible_facts.getent_group['docker'][2].split(',')"
         fail_msg: "chasty2 is not a member of the docker group"
+
+    - name: Run pulumi
+      ansible.builtin.command: pulumi version
+      environment:
+        PULUMI_SKIP_UPDATE_CHECK: "true"
+      changed_when: false
 
     - name: Stat the secrets mountpoint
       ansible.builtin.stat:
