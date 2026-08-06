@@ -18,7 +18,7 @@ and heavy compute
 |------|------|------|
 | `esper` | Physical | Proxmox VE hypervisor; NFS server for container data; nightly backups to PBS |
 | `simic` | Physical | Proxmox Backup Server |
-| `abzan` | Physical | GPU/development server; Jupyter and Sunshine game streaming |
+| `abzan` | Physical | GPU/development server |
 | `gate` | VM | Public-facing SSH bastion |
 | `proxy` | VM | Nginx Proxy Manager; terminates HTTP/HTTPS for public services |
 | `bailey` | VM | Web services: Jellyfin and FoundryVTT |

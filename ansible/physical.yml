@@ -18,5 +18,6 @@
   hosts: abzan
   roles:
     - podman
-    - jupyter
-    - sunshine
+    # - jupyter
+    # - sunshine
+    - dev
