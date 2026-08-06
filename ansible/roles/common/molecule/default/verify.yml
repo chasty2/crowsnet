@@ -20,6 +20,21 @@
         database: passwd
         key: chasty2
 
+    - name: Validate the chasty2 sudoers drop-in
+      ansible.builtin.command: /usr/sbin/visudo -csf /etc/sudoers.d/chasty2
+      changed_when: false
+
+    - name: Read the chasty2 sudoers drop-in
+      ansible.builtin.slurp:
+        src: /etc/sudoers.d/chasty2
+      register: common_chasty2_sudoers
+
+    - name: Assert the sudoers drop-in ends with a newline
+      ansible.builtin.assert:
+        that:
+          - (common_chasty2_sudoers.content | b64decode).endswith('\n')
+        fail_msg: "sudoers drop-in has no trailing newline; sudo 1.9.13+ rejects it"
+
     - name: Read chasty2 .bashrc
       ansible.builtin.slurp:
         src: /home/chasty2/.bashrc
