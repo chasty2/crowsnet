@@ -2,8 +2,8 @@
 
 Sets up the development sandbox (`lab`): installs the dev packages, including Claude
 Code, kubectl, gh, and Docker CE from their respective signed apt repositories,
-Pulumi from their official install scripts (there is no apt repository for either), adds the
-admin users to the `docker` group, and mounts the shared secrets volume.
+installs uv and Pulumi from their official install scripts (there is no apt repository for either), 
+adds the admin users to the `docker` group, and mounts the shared secrets volume.
 
 Docker group membership only takes effect on the user's next login session.
 
