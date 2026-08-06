@@ -28,6 +28,7 @@
       changed_when: false
       loop:
         - claude
+        - curl
         - kubectl
         - gh
         - uv
