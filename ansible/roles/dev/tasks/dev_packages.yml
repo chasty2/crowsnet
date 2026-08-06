@@ -52,3 +52,19 @@
         UV_NO_MODIFY_PATH: "1"
       args:
         creates: "{{ dev_uv_install_dir }}/uv"
+
+    - name: Download the Pulumi installer
+      ansible.builtin.get_url:
+        url: "{{ dev_pulumi_installer_url }}"
+        dest: "{{ dev_pulumi_installer_path }}"
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install Pulumi
+      ansible.builtin.command: >-
+        {{ dev_pulumi_installer_path }}
+        --install-root {{ dev_pulumi_install_root }}
+        --no-edit-path
+      args:
+        creates: "{{ dev_pulumi_install_root }}/bin/pulumi"

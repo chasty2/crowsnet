@@ -25,5 +25,9 @@ dev_uv_installer_url: https://astral.sh/uv/install.sh
 dev_uv_installer_path: /usr/local/src/uv-install.sh
 dev_uv_install_dir: /usr/local/bin
 
+dev_pulumi_installer_url: https://get.pulumi.com
+dev_pulumi_installer_path: /usr/local/src/pulumi-install.sh
+dev_pulumi_install_root: /usr/local
+
 dev_secrets_mount: /mnt/secrets
 dev_secrets_user: chasty2
