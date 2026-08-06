@@ -1,0 +1,19 @@
+---
+# The docker package creates this group itself; declaring it keeps the `users`
+# tag runnable on its own.
+- name: User Config Block
+  become: true
+  tags: users
+  block:
+    - name: Add docker group
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Add admin users to the docker group
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        groups: docker
+        append: true
+        state: present
+      with_items: "{{ admin_users }}"
