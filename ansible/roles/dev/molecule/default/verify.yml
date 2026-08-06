@@ -17,6 +17,11 @@
         - git
         - kubectl
         - gh
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
 
     - name: Locate expected binaries on PATH
       ansible.builtin.command: "which {{ item }}"
@@ -27,11 +32,33 @@
         - gh
         - uv
         - uvx
+        - docker
         - pulumi
 
     - name: Run uv
       ansible.builtin.command: uv --version
       changed_when: false
+
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Assert docker is running and enabled
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services["docker.service"].state == "running"
+          - ansible_facts.services["docker.service"].status == "enabled"
+        fail_msg: "docker.service is not running and enabled"
+
+    - name: Read the docker group
+      ansible.builtin.getent:
+        database: group
+        key: docker
+
+    - name: Assert chasty2 belongs to the docker group
+      ansible.builtin.assert:
+        that:
+          - "'chasty2' in ansible_facts.getent_group['docker'][2].split(',')"
+        fail_msg: "chasty2 is not a member of the docker group"
 
     - name: Run pulumi
       ansible.builtin.command: pulumi version

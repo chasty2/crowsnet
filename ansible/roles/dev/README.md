@@ -1,9 +1,11 @@
 # Dev Role
 
 Sets up the development sandbox (`lab`): installs the dev packages, including Claude
-Code, kubectl, and gh from their respective signed apt repositories, installs uv and
-Pulumi from their official install scripts (there is no apt repository for either),
-and mounts the shared secrets volume.
+Code, kubectl, gh, and Docker CE from their respective signed apt repositories,
+installs uv from Astral's install script (there is no apt repository for it), adds the
+admin users to the `docker` group, and mounts the shared secrets volume.
+
+Docker group membership only takes effect on the user's next login session.
 
 ## Requirements
 - `common` role
@@ -17,6 +19,12 @@ and mounts the shared secrets volume.
   `dev_packages`; each entry has `name` (apt source filename), `key_url` (signing
   key to fetch), `keyring` (where that key is stored under `/etc/apt/keyrings/`),
   and `repo` (the apt source line, signed by the keyring)
+- `dev_docker_repo_url` - Base URL of Docker's apt repository, derived from
+  `ansible_distribution` (Docker publishes a separate repository per distro, and the
+  suite is the release codename, unlike the other three repositories)
+- `dev_docker_arch` - Architecture for Docker's apt source line, derived from
+  `ansible_architecture`
+- `dev_services` - Services to start and enable
 - `dev_uv_installer_url` - Astral install script to fetch
 - `dev_uv_installer_path` - Where that script is stored (`/usr/local/src/uv-install.sh`)
 - `dev_uv_install_dir` - Where `uv` and `uvx` are installed (`/usr/local/bin`)
