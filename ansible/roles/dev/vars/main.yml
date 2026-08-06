@@ -6,6 +6,15 @@ dev_packages:
   - claude-code
   - kubectl
   - gh
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+# Docker's apt repository is distro- and release-specific, unlike the others
+dev_docker_repo_url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}"
+dev_docker_arch: "{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}"
 
 dev_apt_repos:
   - name: claude-code
@@ -20,6 +29,13 @@ dev_apt_repos:
     key_url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
     keyring: /etc/apt/keyrings/githubcli-archive-keyring.gpg
     repo: "deb [signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main"
+  - name: docker
+    key_url: "{{ dev_docker_repo_url }}/gpg"
+    keyring: /etc/apt/keyrings/docker.asc
+    repo: "deb [arch={{ dev_docker_arch }} signed-by=/etc/apt/keyrings/docker.asc] {{ dev_docker_repo_url }} {{ ansible_distribution_release }} stable"
+
+dev_services:
+  - docker
 
 dev_uv_installer_url: https://astral.sh/uv/install.sh
 dev_uv_installer_path: /usr/local/src/uv-install.sh

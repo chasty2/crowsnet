@@ -1,9 +1,16 @@
 ---
-# The local mode below is cosmetic; NFS overlays it once mounted.
 - name: Service Config Block
   become: true
   tags: services
   block:
+    - name: Start/enable dev services
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      with_items: "{{ dev_services }}"
+
+    # The local mode below is cosmetic; NFS overlays it once mounted.
     - name: Create {{ dev_secrets_mount }}
       ansible.builtin.file:
         path: "{{ dev_secrets_mount }}"
