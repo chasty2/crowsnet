@@ -24,6 +24,7 @@ common_packages:
   - vim
   - nmap
   - wget
+  - curl
   - firewalld
   - less
   - nfs-common
