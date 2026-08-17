@@ -50,18 +50,29 @@ mounted into the container at run time
 ## Provisioning (Pulumi)
 
 VM definitions live in [`pulumi/vms.py`](pulumi/vms.py). VM's use MAC-associated fixed
-IP addresses that are assigned via DHCP. VM's are are managed across three Pulumi stacks:
+IP addresses that are assigned via DHCP. The stack name selects what gets deployed —
+`k8s` deploys workloads onto the MicroK8s cluster, every other stack deploys VM's:
 
 | Stack | Purpose |
 |-------|---------|
 | `stage` | Throwaway VM created and destroyed by the Molecule suite |
 | `dev` | Development sandbox |
 | `prod` | The live homelab |
+| `k8s` | MicroK8s workloads running on `kube-1` |
 
 ```bash
-./crowsnet.py deploy <stage|dev|prod>    # pulumi up
-./crowsnet.py destroy <stage|dev|prod>   # pulumi destroy
-./crowsnet.py refresh <stage|dev|prod>   # pulumi refresh
+./crowsnet.py deploy <stage|dev|prod|k8s>    # pulumi up
+./crowsnet.py destroy <stage|dev|prod|k8s>   # pulumi destroy
+./crowsnet.py refresh <stage|dev|prod|k8s>   # pulumi refresh
+```
+
+The `k8s` stack talks to the cluster through the `kubernetes:kubeconfig` stack
+config value rather than a kubeconfig file, so it needs to be set once:
+
+```bash
+cd pulumi
+pulumi stack init k8s
+pulumi config set --secret kubernetes:kubeconfig "$(ssh kube-1 microk8s config)" --stack k8s
 ```
 
 ## Configuration (Ansible)
