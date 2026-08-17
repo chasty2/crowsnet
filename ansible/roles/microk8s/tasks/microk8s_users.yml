@@ -14,7 +14,7 @@
         path: "/home/{{ microk8s_user }}/.kube"
         owner: "{{ microk8s_user }}"
         group: "{{ microk8s_user }}"
-        mode: "0644"
+        mode: "0700"
         state: directory
 
     - name: Generate kubeconfig for remote access
