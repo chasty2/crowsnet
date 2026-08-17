@@ -1,4 +1,4 @@
-"""Tests for the ProxmoxVM component in pulumi/components.py."""
+"""Tests for the ProxmoxVM component in pulumi/components/proxmox.py."""
 
 import pulumi
 
@@ -13,7 +13,7 @@ class _Mocks(pulumi.runtime.Mocks):
 
 pulumi.runtime.set_mocks(_Mocks())
 
-from components import ProxmoxVM  # noqa: E402  (must follow set_mocks)
+from components.proxmox import ProxmoxVM  # noqa: E402  (must follow set_mocks)
 
 
 def _make(template="small", **overrides):

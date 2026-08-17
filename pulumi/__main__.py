@@ -3,7 +3,7 @@
 import pulumi
 from pulumi_proxmoxve import Provider
 
-from components import ProxmoxVM
+from components.proxmox import ProxmoxVM
 from vms import select_vms
 
 config = pulumi.Config("proxmox")
