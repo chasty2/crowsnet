@@ -21,6 +21,7 @@
       ansible.builtin.command: microk8s config
       register: microk8s_kubeconfig
       changed_when: false
+      check_mode: false
 
     - name: Ensure .kube directory exists on development servers
       ansible.builtin.file:
