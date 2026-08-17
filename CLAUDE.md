@@ -13,9 +13,9 @@
 ./crowsnet.py build                        # Build the CrowsNet container
 
 # Infrastructure (Pulumi)
-./crowsnet.py deploy <stage|dev|prod>      # Deploy infrastructure
-./crowsnet.py destroy <stage|dev|prod>     # Destroy infrastructure
-./crowsnet.py refresh <stage|dev|prod>     # Refresh infrastructure state
+./crowsnet.py deploy <stage|dev|prod|k8s>      # Deploy infrastructure
+./crowsnet.py destroy <stage|dev|prod|k8s>     # Destroy infrastructure
+./crowsnet.py refresh <stage|dev|prod|k8s>     # Refresh infrastructure state
 
 # Configuration (Ansible)
 ./crowsnet.py configure                    # Full site deployment

@@ -16,4 +16,5 @@ vault.pass
 *.pyc
 venv/
 Pulumi.yaml
+Pulumi.*.yaml
 pulumi/pulumi.token

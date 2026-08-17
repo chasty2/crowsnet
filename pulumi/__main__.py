@@ -1,34 +1,53 @@
-"""Provision CrowsNet virtual machines"""
+"""
+Provision CrowsNet infrastructure for the selected Pulumi stack.
+"""
 
 import pulumi
 from pulumi_proxmoxve import Provider
 
-from components import ProxmoxVM
+from components.proxmox import ProxmoxVM
+from test_k8s import deploy_test_nginx
 from vms import select_vms
 
-config = pulumi.Config("proxmox")
-endpoint = config.require("endpoint")
-api_token = config.require("api-token")
-api_name = config.require("api-name")
 
-provider = Provider(
-    "proxmoxve",
-    endpoint=endpoint,
-    api_token=f"{api_name}={api_token}",
-    insecure=True
-)
-
-vms = select_vms(pulumi.get_stack())
-
-for vm in vms:
-    ProxmoxVM(
-        name=vm["name"],
-        vmid=vm["vmid"],
-        cpu=vm["cpu"],
-        ram=vm["ram"],
-        ip=vm["ip"],
-        mac=vm["mac"],
-        clone=vm["clone"],
-        template=vm["template"],
-        opts=pulumi.ResourceOptions(provider=provider),
+def deploy_proxmox_vms(stack: str) -> None:
+    """Deploy the VMs belonging to a Proxmox stack."""
+    config = pulumi.Config("proxmox")
+    provider = Provider(
+        "proxmoxve",
+        endpoint=config.require("endpoint"),
+        api_token=f"{config.require('api-name')}={config.require('api-token')}",
+        insecure=True
     )
+
+    for vm in select_vms(stack):
+        ProxmoxVM(
+            name=vm["name"],
+            vmid=vm["vmid"],
+            cpu=vm["cpu"],
+            ram=vm["ram"],
+            ip=vm["ip"],
+            mac=vm["mac"],
+            clone=vm["clone"],
+            template=vm["template"],
+            opts=pulumi.ResourceOptions(provider=provider),
+        )
+
+
+def deploy_k8s() -> None:
+    """Deploy workloads onto the MicroK8s cluster.
+
+    Cluster credentials come from the stack's `kubernetes:kubeconfig` config
+    value, which the default kubernetes provider reads on its own.
+    """
+    _, service = deploy_test_nginx()
+    pulumi.export("test_nginx_service", service.metadata.name)
+    pulumi.export("test_nginx_node_port", service.spec.ports[0].node_port)
+
+
+stack = pulumi.get_stack()
+
+if stack == "k8s":
+    deploy_k8s()
+else:
+    deploy_proxmox_vms(stack)

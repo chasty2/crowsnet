@@ -7,3 +7,4 @@ microk8s_user: chasty2
 
 microk8s_permitted_ports:
   - 16443/tcp  # microk8s kube-apiserver
+  - 30000-32767/tcp  # kubernetes NodePort range

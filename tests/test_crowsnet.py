@@ -19,7 +19,7 @@ def test_build_calls_build_container(runner, mocker):
 
 
 @pytest.mark.parametrize("command", ["deploy", "destroy", "refresh"])
-@pytest.mark.parametrize("stack", ["stage", "prod"])
+@pytest.mark.parametrize("stack", ["stage", "prod", "k8s"])
 def test_pulumi_commands_pass_stack(runner, mocker, command, stack):
     run = mocker.patch("crowsnet.run_container", return_value=0)
     result = runner.invoke(crowsnet.cli, [command, stack])
