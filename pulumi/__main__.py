@@ -1,7 +1,5 @@
-"""Provision CrowsNet infrastructure for the selected Pulumi stack.
-
-The stack name selects what kind of infrastructure is deployed: `k8s` deploys
-workloads onto the MicroK8s cluster, every other stack deploys Proxmox VMs.
+"""
+Provision CrowsNet infrastructure for the selected Pulumi stack.
 """
 
 import pulumi
