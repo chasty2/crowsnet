@@ -14,13 +14,19 @@
         path: "/home/{{ microk8s_user }}/.kube"
         owner: "{{ microk8s_user }}"
         group: "{{ microk8s_user }}"
-        mode: "0644"
+        mode: "0700"
         state: directory
+
+    - name: Wait for microk8s to become ready
+      ansible.builtin.command: microk8s status --wait-ready --timeout 300
+      changed_when: false
+      check_mode: false
 
     - name: Generate kubeconfig for remote access
       ansible.builtin.command: microk8s config
       register: microk8s_kubeconfig
       changed_when: false
+      check_mode: false
 
     - name: Ensure .kube directory exists on development servers
       ansible.builtin.file:
