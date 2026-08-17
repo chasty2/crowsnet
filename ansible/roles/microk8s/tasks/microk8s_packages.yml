@@ -7,5 +7,5 @@
       community.general.snap:
         name: "{{ item }}"
         classic: true
-        channel: 1.32
+        channel: "1.32/stable"
       with_items: "{{ microk8s_packages }}"
