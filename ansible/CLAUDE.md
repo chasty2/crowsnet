@@ -33,8 +33,7 @@ role_name/
 │   ├── role_name_packages.yml      # Package management tasks
 │   ├── role_name_services.yml      # Service management tasks
 │   └── role_name_firewalld.yml     # Firewall configuration tasks
-├── molecule/
-│   └── default/          # Molecule integration scenario (see Molecule Testing)
+├── tests/                # Assertion tasks, one file per task file (see Molecule Testing)
 ├── vars/main.yml         # Role variables
 ├── handlers/main.yml     # Event handlers
 ├── templates/            # Jinja2 templates
@@ -43,37 +42,49 @@ role_name/
 
 This standardization allows predictable role structure and granular control over which aspects of configuration to apply during playbook runs.
 
-> **Note:** Roles are tested with Molecule (see below), not the legacy
-> `tests/test.yml` playbook. New roles get a `molecule/` scenario instead of a
-> `tests/` directory.
-
 ## Molecule Testing
 
-Roles are integration-tested with Molecule. A `molecule test` run provisions the
-real `stage` VM via Pulumi, converges the role, checks **idempotency**, runs
+Integration testing is done with Molecule. A `molecule test` run provisions the
+real `stage` VM via Pulumi, converges the scenario, checks **idempotency**, runs
 the verifier, then destroys the VM (destroy always runs last, even on failure).
 
-Run a role's scenario from the repo root:
+Run a scenario from the repo root:
 ```bash
-./crowsnet.py test --integration --role <role>   # defaults to `common`
+./crowsnet.py test --integration --scenario <scenario>   # defaults to `common`
 ```
 
-### Adding a scenario to a role
-Place the scenario under the role:
+### Scenarios are per host, tests are per role
+A scenario models a **host**, not a role. It converges the same role stack that
+host receives in `site.yml`, and its `verify.yml` does nothing but include the
+assertion tasks that each of those roles keeps in its own `tests/` directory.
+Roles are therefore reusable across scenarios, and a host is tested the way it is
+actually built:
+
 ```
-roles/<role>/molecule/default/
-├── molecule.yml      # scenario config
-├── converge.yml      # applies the role
-└── verify.yml        # smoke checks
+molecule/
+├── shared/           # create.yml, prepare.yml, destroy.yml — written once
+└── <host>/
+    ├── molecule.yml  # scenario config
+    ├── converge.yml  # applies the host's roles
+    └── verify.yml    # includes each role's tests/
+
+roles/<role>/tests/
+├── packages.yml      # assertions for <role>_packages.yml
+├── users.yml         # assertions for <role>_users.yml
+└── ...               # one file per task file, named to match
 ```
 
-The lifecycle playbooks (`create`, `prepare`, `destroy`) are written **once** in
-`ansible/molecule/shared/` and reused by every role — do **not** reimplement them
-per role. The fastest path to a new scenario is to copy
-`roles/common/molecule/default/` and adjust the role name.
+`ansible/molecule/kube-1/` is the reference scenario. The `common` and `dev`
+roles predate this layout and still carry role-scoped
+`roles/<role>/molecule/default/` scenarios; fold them in rather than adding more.
+
+The lifecycle playbooks (`create`, `prepare`, `destroy`) live **once** in
+`molecule/shared/` — do **not** reimplement them per scenario. Molecule runs from
+`ansible/`, so `MOLECULE_PROJECT_DIRECTORY` is that directory and every path is
+written relative to it.
 
 **`molecule.yml`** — `driver: default`; one platform named `stage`; a galaxy
-dependency pointing at `../requirements.yml`; `provisioner.playbooks` wiring the
+dependency pointing at the roles requirements; `provisioner.playbooks` wiring the
 three shared playbooks; `ANSIBLE_ROLES_PATH` set to the roles directory; and
 `verifier: ansible`:
 ```yaml
@@ -87,39 +98,60 @@ platforms:
 dependency:
   name: galaxy
   options:
-    requirements-file: ${MOLECULE_PROJECT_DIRECTORY}/../requirements.yml
+    requirements-file: ${MOLECULE_PROJECT_DIRECTORY}/roles/requirements.yml
 
 provisioner:
   name: ansible
   playbooks:
-    create: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/create.yml
-    prepare: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/prepare.yml
-    destroy: ${MOLECULE_PROJECT_DIRECTORY}/../../molecule/shared/destroy.yml
+    create: ${MOLECULE_PROJECT_DIRECTORY}/molecule/shared/create.yml
+    prepare: ${MOLECULE_PROJECT_DIRECTORY}/molecule/shared/prepare.yml
+    destroy: ${MOLECULE_PROJECT_DIRECTORY}/molecule/shared/destroy.yml
   env:
     ANSIBLE_HOST_KEY_CHECKING: "false"
-    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/roles
 
 verifier:
   name: ansible
 ```
 
 **`converge.yml`** — `hosts: all`, `become: true`, loads shared vars from
-`group_vars/all`, and lists the role:
+`group_vars/all`, and lists the host's roles in `site.yml` order:
 ```yaml
 ---
 - name: Converge
   hosts: all
   become: true
   vars_files:
-    - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../group_vars/all"
+    - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/group_vars/all"
   roles:
+    - common # noqa syntax-check[specific]
     - <role> # noqa syntax-check[specific]
 ```
 
-**`verify.yml`** — smoke checks asserting the role's key
-effects (a service is running, a user exists, etc.). Every scenario must include
-one. Do **not** test idempotency here; molecule's built-in `idempotence` step
-handles that.
+**`verify.yml`** — includes only. Load each covered role's `vars/main.yml` through
+`vars_files` so the assertions read the same values the role applied; role vars are
+otherwise out of scope once the role finishes:
+```yaml
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    ansible_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+  vars_files:
+    - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/roles/<role>/vars/main.yml"
+  tasks:
+    - name: Verify <role> packages
+      ansible.builtin.include_tasks: "{{ ansible_dir }}/roles/<role>/tests/packages.yml"
+```
+
+Assertion tasks are read-only: give every `command` a `changed_when: false`. Do
+**not** test idempotency there; molecule's built-in `idempotence` step handles it.
+
+Roles must not reach outside the host they run on. A `delegate_to` at another
+inventory host makes a role unconvergeable against a single VM — put the work in
+the role that owns the target host instead.
 
 ## Formatting
 - End each `.yml` file with a newline
