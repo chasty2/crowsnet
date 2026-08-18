@@ -21,19 +21,19 @@ def run_pytest() -> int:
     return result.returncode
 
 
-def run_integration(role: str = "common") -> int:
-    """Run the molecule integration suite for a role inside the ops container.
+def run_integration(scenario: str = "common") -> int:
+    """Run a molecule scenario inside the ops container.
 
     Dispatches the container's `test` action through the same `run_container`
     path as production (configure/deploy), so molecule sees the production mount
     layout (ansible -> /etc/ansible, pulumi -> /pulumi) and user-namespace mapping.
-    Molecule then provisions the lab VM via Pulumi, converges the role, checks
-    idempotency, and destroys the VM.
+    Molecule then provisions the stage VM via Pulumi, converges the scenario's
+    roles, checks idempotency, and destroys the VM.
 
     Args:
-        role: The role whose molecule scenario to run.
+        scenario: The molecule scenario to run.
 
     Returns:
         The return code from the container.
     """
-    return run_container("test", [role])
+    return run_container("test", [scenario])

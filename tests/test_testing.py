@@ -28,10 +28,10 @@ def test_run_integration_dispatches_test_action(mocker):
     run_container.assert_called_once_with("test", ["common"])
 
 
-def test_run_integration_forwards_role(mocker):
+def test_run_integration_forwards_scenario(mocker):
     run_container = mocker.patch.object(testing, "run_container", return_value=0)
-    testing.run_integration("jellyfin")
-    run_container.assert_called_once_with("test", ["jellyfin"])
+    testing.run_integration("kube-1")
+    run_container.assert_called_once_with("test", ["kube-1"])
 
 
 def test_run_integration_propagates_return_code(mocker):

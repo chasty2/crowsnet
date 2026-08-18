@@ -86,12 +86,12 @@ def test_test_integration_flag_runs_integration(runner, mocker):
     run_pytest.assert_not_called()
 
 
-def test_test_integration_accepts_role(runner, mocker):
+def test_test_integration_accepts_scenario(runner, mocker):
     mocker.patch("crowsnet.run_pytest", return_value=0)
     run_integration = mocker.patch("crowsnet.run_integration", return_value=0)
-    result = runner.invoke(crowsnet.cli, ["test", "--integration", "--role", "jellyfin"])
+    result = runner.invoke(crowsnet.cli, ["test", "--integration", "--scenario", "kube-1"])
     assert result.exit_code == 0
-    run_integration.assert_called_once_with("jellyfin")
+    run_integration.assert_called_once_with("kube-1")
 
 
 def test_exit_code_propagates(runner, mocker):

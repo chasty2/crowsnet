@@ -51,11 +51,11 @@ def update(limit):
 
 @cli.command()
 @click.option("--integration", is_flag=True, help="Run the molecule integration suite against the stage VM")
-@click.option("--role", default="common", help="Role to run the integration suite against")
-def test(integration, role):
+@click.option("--scenario", default="common", help="Molecule scenario to run the integration suite against")
+def test(integration, scenario):
     """Run the test suite (pytest unit tests by default)."""
     if integration:
-        sys.exit(run_integration(role))
+        sys.exit(run_integration(scenario))
     sys.exit(run_pytest())
 
 
