@@ -1,0 +1,26 @@
+---
+# Assertions for microk8s_users.yml
+- name: Read the microk8s group
+  ansible.builtin.getent:
+    database: group
+    key: microk8s
+
+- name: Assert the microk8s user belongs to the microk8s group
+  ansible.builtin.assert:
+    that:
+      - "microk8s_user in ansible_facts.getent_group['microk8s'][2].split(',')"
+    fail_msg: "{{ microk8s_user }} is not a member of the microk8s group"
+
+- name: Stat the .kube caching directory
+  ansible.builtin.stat:
+    path: "/home/{{ microk8s_user }}/.kube"
+  register: microk8s_kube_dir
+
+- name: Assert the .kube caching directory is owned by the microk8s user with mode 0700
+  ansible.builtin.assert:
+    that:
+      - microk8s_kube_dir.stat.isdir
+      - microk8s_kube_dir.stat.pw_name == microk8s_user
+      - microk8s_kube_dir.stat.gr_name == microk8s_user
+      - microk8s_kube_dir.stat.mode == "0700"
+    fail_msg: "/home/{{ microk8s_user }}/.kube is not a {{ microk8s_user }}-owned 0700 directory"

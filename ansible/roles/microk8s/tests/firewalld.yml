@@ -1,0 +1,13 @@
+---
+# Assertions for microk8s_firewalld.yml
+- name: Read the ports open on firewalld zone 'internal'
+  ansible.builtin.command: firewall-cmd --zone=internal --list-ports
+  register: microk8s_open_ports
+  changed_when: false
+
+- name: Assert the permitted ports are open
+  ansible.builtin.assert:
+    that:
+      - "item in microk8s_open_ports.stdout.split()"
+    fail_msg: "{{ item }} is not open on firewalld zone 'internal'"
+  loop: "{{ microk8s_permitted_ports }}"

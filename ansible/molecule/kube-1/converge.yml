@@ -1,0 +1,12 @@
+---
+# The role stack kube-1 receives in site.yml: common and virtual from the
+# `virtual` play, then microk8s from its own.
+- name: Converge
+  hosts: all
+  become: true
+  vars_files:
+    - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/group_vars/all"
+  roles:
+    - common # noqa syntax-check[specific]
+    - virtual # noqa syntax-check[specific]
+    - microk8s # noqa syntax-check[specific]

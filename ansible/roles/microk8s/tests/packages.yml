@@ -1,0 +1,23 @@
+---
+# Assertions for microk8s_packages.yml
+- name: List installed snaps
+  ansible.builtin.command: snap list
+  register: microk8s_snap_list
+  changed_when: false
+
+- name: Assert the microk8s snap is installed
+  ansible.builtin.assert:
+    that:
+      - "'microk8s' in microk8s_snap_list.stdout"
+    fail_msg: "the microk8s snap is not installed"
+
+- name: Stat the microk8s binary
+  ansible.builtin.stat:
+    path: /snap/bin/microk8s
+  register: microk8s_binary
+
+- name: Assert the microk8s binary exists
+  ansible.builtin.assert:
+    that:
+      - microk8s_binary.stat.exists
+    fail_msg: "/snap/bin/microk8s is missing"
