@@ -21,30 +21,3 @@
       ansible.builtin.command: microk8s status --wait-ready --timeout 300
       changed_when: false
       check_mode: false
-
-    - name: Generate kubeconfig for remote access
-      ansible.builtin.command: microk8s config
-      register: microk8s_kubeconfig
-      changed_when: false
-      check_mode: false
-
-    - name: Ensure .kube directory exists on development servers
-      ansible.builtin.file:
-        path: "/home/{{ microk8s_user }}/.kube"
-        owner: "{{ microk8s_user }}"
-        group: "{{ microk8s_user }}"
-        mode: "0700"
-        state: directory
-      delegate_to: "{{ item }}"
-      loop: "{{ development_servers }}"
-
-    - name: Copy kubeconfig to development servers
-      ansible.builtin.copy:
-        content: "{{ microk8s_kubeconfig.stdout }}"
-        dest: "/home/{{ microk8s_user }}/.kube/config"
-        owner: "{{ microk8s_user }}"
-        group: "{{ microk8s_user }}"
-        mode: "0600"
-      delegate_to: "{{ item }}"
-      loop: "{{ development_servers }}"
-      notify: Verify kubectl access on development servers

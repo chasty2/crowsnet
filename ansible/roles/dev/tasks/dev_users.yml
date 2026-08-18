@@ -17,3 +17,41 @@
         append: true
         state: present
       with_items: "{{ admin_users }}"
+
+    # The kubeconfig is only distributed once the node is up. Guarding on the
+    # binary keeps this a no-op on a first-ever run, where the dev plays are
+    # reached before the microk8s node is configured.
+    - name: Check whether the microk8s node is provisioned
+      ansible.builtin.stat:
+        path: /snap/bin/microk8s
+      register: dev_microk8s_binary
+      delegate_to: "{{ microk8s_node }}"
+      when: microk8s_node in groups['all']
+
+    - name: Generate kubeconfig from the microk8s node
+      ansible.builtin.command: microk8s config
+      register: dev_kubeconfig
+      changed_when: false
+      check_mode: false
+      delegate_to: "{{ microk8s_node }}"
+      when: dev_microk8s_binary.stat.exists | default(false)
+
+    - name: Configure access to .kube caching directory
+      ansible.builtin.file:
+        path: "/home/{{ item.name }}/.kube"
+        owner: "{{ item.name }}"
+        group: "{{ item.name }}"
+        mode: "0700"
+        state: directory
+      with_items: "{{ admin_users }}"
+      when: dev_microk8s_binary.stat.exists | default(false)
+
+    - name: Install kubeconfig for admin users
+      ansible.builtin.copy:
+        content: "{{ dev_kubeconfig.stdout }}"
+        dest: "/home/{{ item.name }}/.kube/config"
+        owner: "{{ item.name }}"
+        group: "{{ item.name }}"
+        mode: "0600"
+      with_items: "{{ admin_users }}"
+      when: dev_microk8s_binary.stat.exists | default(false)
