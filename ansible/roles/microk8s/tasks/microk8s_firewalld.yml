@@ -12,9 +12,6 @@
         immediate: true
       with_items: "{{ microk8s_permitted_ports }}"
 
-    # Must be 'trusted', not 'internal'. A zone with target 'default' only
-    # forwards within itself, which is enough for pods to reach the LAN but
-    # still rejects everything bound for the internet.
     - name: Allow permitted networks on firewalld zone 'trusted'
       ansible.posix.firewalld:
         zone: trusted

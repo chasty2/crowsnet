@@ -13,8 +13,6 @@
 #
 # sharenfs must be set on these ZFS volumes
 
-{# no_root_squash: kubelet prepares subPath mounts as root, and a squashed root
-   cannot traverse the 0770 export directories. Containers still run unprivileged. #}
 {% for mount in proxmox_nfs_mounts %}
 {{ mount.path }}                192.168.4.0/22(rw,sync,no_subtree_check,no_root_squash)
 {% endfor %}
