@@ -27,9 +27,9 @@
 ./crowsnet.py update                       # Update and reboot all VMs
 
 # Testing
-./crowsnet.py test                                # Unit tests (pytest, host-side, no infra)
-./crowsnet.py test --integration                  # Molecule integration suite (role: common)
-./crowsnet.py test --integration --role <role>    # Integration suite for a specific role
+./crowsnet.py test                                        # Unit tests (pytest, host-side, no infra)
+./crowsnet.py test --integration                          # Molecule integration suite (scenario: common)
+./crowsnet.py test --integration --scenario <scenario>    # Integration suite for a specific scenario
 ```
 
 ## Testing Workflow
@@ -40,11 +40,13 @@ The suite has two layers (a third, CI on a self-hosted runner, is still pending)
   dispatch, podman command construction, and Pulumi component logic. Lives in
   `tests/`. Run on every change via `./crowsnet.py test`.
 - **Integration (Molecule)** — provisions the real `stage` VM via Pulumi,
-  converges a role, checks idempotency, then tears the VM down (destroy always
-  runs last, even on failure). Run when changing an Ansible role via
-  `./crowsnet.py test --integration [--role <role>]`. Runs inside the ops
+  converges a scenario, checks idempotency, then tears the VM down (destroy always
+  runs last, even on failure). A scenario models a host and converges the role
+  stack that host receives; assertions live in each role's `tests/` directory.
+  Run when changing an Ansible role via
+  `./crowsnet.py test --integration [--scenario <scenario>]`. Runs inside the ops
   container and requires Pulumi `stage` access. See `ansible/CLAUDE.md` for how
-  to add a Molecule scenario to a role.
+  to add a Molecule scenario.
 
 ## Directory Structure
 ```

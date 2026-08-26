@@ -35,9 +35,17 @@ case "$ACTION" in
         pulumi refresh --yes --stack "$@"
         ;;
     test)
-        ROLE="${1:-common}"
-        cd "/etc/ansible/roles/${ROLE}"
-        molecule test
+        SCENARIO="${1:-common}"
+        # Scenarios live in ansible/molecule/<scenario>/. The common and dev roles
+        # still carry their own role-scoped scenarios; drop the fallback once they
+        # are folded into project-level scenarios.
+        if [ -d "/etc/ansible/molecule/${SCENARIO}" ]; then
+            cd /etc/ansible
+            molecule test -s "${SCENARIO}"
+        else
+            cd "/etc/ansible/roles/${SCENARIO}"
+            molecule test
+        fi
         ;;
     *)
         echo "Unknown action: $ACTION"

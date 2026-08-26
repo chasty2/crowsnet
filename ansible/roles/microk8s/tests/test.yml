@@ -1,6 +1,0 @@
----
-- name: Test microk8s role configuration
-  hosts: lab
-  roles:
-    - common # noqa syntax-check[specific]
-    - microk8s # noqa syntax-check[specific]

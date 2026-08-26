@@ -1,0 +1,21 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    ansible_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+  vars_files:
+    - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/roles/microk8s/vars/main.yml"
+  tasks:
+    - name: Verify microk8s packages
+      ansible.builtin.include_tasks: "{{ ansible_dir }}/roles/microk8s/tests/packages.yml"
+
+    - name: Verify microk8s users
+      ansible.builtin.include_tasks: "{{ ansible_dir }}/roles/microk8s/tests/users.yml"
+
+    - name: Verify the microk8s cluster
+      ansible.builtin.include_tasks: "{{ ansible_dir }}/roles/microk8s/tests/cluster.yml"
+
+    - name: Verify microk8s firewalld
+      ansible.builtin.include_tasks: "{{ ansible_dir }}/roles/microk8s/tests/firewalld.yml"

@@ -1,9 +1,7 @@
 nfs_server: esper
 proxy_server: proxy
 backup_server: simic
-development_servers:
-  - abzan
-  - lab
+microk8s_node: kube-1
 
 admin_users:
   - { name: "chasty2", uid: "1001", gid: "1001" }

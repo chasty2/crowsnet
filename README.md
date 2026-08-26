@@ -104,12 +104,14 @@ The suite has two layers (a third, CI on a self-hosted runner, is still pending)
   podman command construction, and Pulumi component logic. Lives in [`tests/`](tests/)
 
 - **Integration (Molecule)** — provisions the real `stage` VM via Pulumi, converges a
-  role, checks idempotency, runs tests, then tears the VM down.
+  scenario, checks idempotency, runs tests, then tears the VM down. A scenario models a
+  host and applies the same role stack that host gets in production; the assertions it
+  runs live in each role's `tests/` directory
 
 ```bash
-./crowsnet.py test                                # unit tests
-./crowsnet.py test --integration                  # integration suite (role: common)
-./crowsnet.py test --integration --role <role>    # integration suite for a specific role
+./crowsnet.py test                                        # unit tests
+./crowsnet.py test --integration                          # integration suite (scenario: common)
+./crowsnet.py test --integration --scenario <scenario>    # integration suite for a specific scenario
 ```
 
 CI/CD is done via GitHub Actions

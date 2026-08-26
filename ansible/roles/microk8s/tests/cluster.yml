@@ -1,0 +1,27 @@
+---
+# Assertions that the node came up as a working single-node cluster
+- name: Wait for microk8s to report ready
+  ansible.builtin.command: microk8s status --wait-ready --timeout 300
+  register: microk8s_status
+  changed_when: false
+
+- name: Assert microk8s is running
+  ansible.builtin.assert:
+    that:
+      - "'microk8s is running' in microk8s_status.stdout"
+    fail_msg: "microk8s did not report itself as running"
+
+- name: Read the cluster nodes
+  ansible.builtin.command: microk8s kubectl get nodes -o json
+  register: microk8s_nodes
+  changed_when: false
+
+- name: Assert the node reports a Ready condition
+  ansible.builtin.assert:
+    that:
+      - microk8s_node_conditions | selectattr('type', 'eq', 'Ready')
+        | selectattr('status', 'eq', 'True') | list | length == 1
+    fail_msg: "the microk8s node is not Ready"
+  vars:
+    microk8s_node_conditions: >-
+      {{ (microk8s_nodes.stdout | from_json)['items'][0].status.conditions }}
