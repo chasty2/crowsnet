@@ -1,5 +1,7 @@
 # Foundry Role
 
+> **Retired.** Foundry now runs on the MicroK8s cluster. Kept here for reference only.
+
 Runs [Foundry Virtual Tabletop](https://foundryvtt.com/) as a rootless Podman container on
 `bailey`, with its world data on an NFS mount from the hypervisor.
 

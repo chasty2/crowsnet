@@ -6,6 +6,7 @@ import pulumi
 from pulumi_proxmoxve import Provider
 
 from components.proxmox import ProxmoxVM
+from foundry import deploy_foundry
 from test_k8s import deploy_test_nginx
 from vms import select_vms
 
@@ -38,11 +39,20 @@ def deploy_k8s() -> None:
     """Deploy workloads onto the MicroK8s cluster.
 
     Cluster credentials come from the stack's `kubernetes:kubeconfig` config
-    value, which the default kubernetes provider reads on its own.
+    value, which the default kubernetes provider reads on its own. The Foundry
+    account lives in the same stack config, as `foundry:username` and the
+    encrypted `foundry:password`.
     """
     _, service = deploy_test_nginx()
     pulumi.export("test_nginx_service", service.metadata.name)
     pulumi.export("test_nginx_node_port", service.spec.ports[0].node_port)
+
+    config = pulumi.Config("foundry")
+    *_, foundry_service = deploy_foundry(
+        username=config.require("username"),
+        password=config.require_secret("password"),
+    )
+    pulumi.export("foundry_node_port", foundry_service.spec.ports[0].node_port)
 
 
 stack = pulumi.get_stack()

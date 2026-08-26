@@ -8,3 +8,7 @@ microk8s_user: chasty2
 microk8s_permitted_ports:
   - 16443/tcp  # microk8s kube-apiserver
   - 30000-32767/tcp  # kubernetes NodePort range
+
+microk8s_permitted_networks:
+  - 10.1.0.0/16  # calico pod network
+  - 10.152.183.0/24  # ClusterIP service network

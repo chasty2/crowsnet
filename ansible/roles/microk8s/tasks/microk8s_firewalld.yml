@@ -11,3 +11,12 @@
         permanent: true
         immediate: true
       with_items: "{{ microk8s_permitted_ports }}"
+
+    - name: Allow permitted networks on firewalld zone 'trusted'
+      ansible.posix.firewalld:
+        zone: trusted
+        source: "{{ item }}"
+        state: enabled
+        permanent: true
+        immediate: true
+      with_items: "{{ microk8s_permitted_networks }}"
