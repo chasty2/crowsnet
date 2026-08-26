@@ -15,7 +15,9 @@ import pulumi_kubernetes as kubernetes
 APP_NAME = "foundry"
 APP_LABELS = {"app": APP_NAME}
 NAMESPACE = "foundry"
-IMAGE = "docker.io/felddy/foundryvtt:release"
+# Pinned: Foundry licenses are tied to a major version, so a floating tag can
+# silently upgrade the cluster into an unlicensed state.
+IMAGE = "docker.io/felddy/foundryvtt:14.367.0"
 CONTAINER_PORT = 30000
 NODE_PORT = 30000
 
@@ -136,15 +138,19 @@ def deploy_foundry(username: pulumi.Input[str], password: pulumi.Input[str]):
                     labels=APP_LABELS,
                 ),
                 spec=kubernetes.core.v1.PodSpecArgs(
+                    # Foundry binds its license signature to the host identity.
+                    # Without a fixed hostname every replacement pod arrives as
+                    # a new install and the license needs re-confirming, so pin
+                    # it the way the podman container used to.
+                    hostname=APP_NAME,
                     automount_service_account_token=False,
                     security_context=kubernetes.core.v1.PodSecurityContextArgs(
                         run_as_non_root=True,
                         run_as_user=PODMAN_UID,
                         run_as_group=PODMAN_GID,
                         fs_group=PODMAN_GID,
-                        # The export is root_squash, so kubelet's recursive
-                        # chown would fail. The data is already podman-owned,
-                        # so OnRootMismatch skips it.
+                        # The data is already podman-owned, so skip kubelet's
+                        # recursive chown over the whole NFS export.
                         fs_group_change_policy="OnRootMismatch",
                         seccomp_profile=kubernetes.core.v1.SeccompProfileArgs(
                             type="RuntimeDefault",

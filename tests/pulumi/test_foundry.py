@@ -102,6 +102,9 @@ def test_pod_drops_privileges_and_mounts_no_service_account_token():
     def check(spec):
         pod = spec["template"]["spec"]
         assert pod["automount_service_account_token"] is False
+        # A replacement pod must look like the same Foundry install, or the
+        # license signature is invalidated and needs re-confirming by hand.
+        assert pod["hostname"] == "foundry"
         container = pod["containers"][0]
         assert container["image"] == IMAGE
         assert container["security_context"]["allow_privilege_escalation"] is False
