@@ -11,3 +11,15 @@
       - "item in microk8s_open_ports.stdout.split()"
     fail_msg: "{{ item }} is not open on firewalld zone 'internal'"
   loop: "{{ microk8s_permitted_ports }}"
+
+- name: Read the sources on firewalld zone 'trusted'
+  ansible.builtin.command: firewall-cmd --zone=trusted --list-sources
+  register: microk8s_trusted
+  changed_when: false
+
+- name: Assert the cluster networks are trusted
+  ansible.builtin.assert:
+    that:
+      - "item in microk8s_trusted.stdout.split()"
+    fail_msg: "{{ item }} is not trusted on firewalld zone 'trusted'; pods cannot reach off-node"
+  loop: "{{ microk8s_permitted_networks }}"

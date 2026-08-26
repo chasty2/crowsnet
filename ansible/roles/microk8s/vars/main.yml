@@ -8,3 +8,16 @@ microk8s_user: chasty2
 microk8s_permitted_ports:
   - 16443/tcp  # microk8s kube-apiserver
   - 30000-32767/tcp  # kubernetes NodePort range
+
+# firewalld rejects forwarded pod traffic by default, which leaves pods unable
+# to reach DNS or anything else off the node. These go in the 'trusted' zone:
+# a zone whose target is 'default' forwards only within itself, so pods could
+# reach the LAN but nothing on the internet.
+#
+# Both are microk8s defaults for the pinned channel above, so they hold for any
+# node this role builds: the pod CIDR is the calico IPv4 pool, and the service
+# CIDR is --service-cluster-ip-range in the kube-apiserver args. Change these
+# only if the cluster is rebuilt with different ranges.
+microk8s_permitted_networks:
+  - 10.1.0.0/16  # calico pod network
+  - 10.152.183.0/24  # ClusterIP service network
