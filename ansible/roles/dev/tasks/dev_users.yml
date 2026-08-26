@@ -1,6 +1,4 @@
 ---
-# The docker package creates this group itself; declaring it keeps the `users`
-# tag runnable on its own.
 - name: User Config Block
   become: true
   tags: users
@@ -18,9 +16,6 @@
         state: present
       with_items: "{{ admin_users }}"
 
-    # The kubeconfig is only distributed once the node is up. Guarding on the
-    # binary keeps this a no-op on a first-ever run, where the dev plays are
-    # reached before the microk8s node is configured.
     - name: Check whether the microk8s node is provisioned
       ansible.builtin.stat:
         path: /snap/bin/microk8s

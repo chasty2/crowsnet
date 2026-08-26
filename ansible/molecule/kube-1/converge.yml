@@ -1,6 +1,4 @@
 ---
-# The role stack kube-1 receives in site.yml: common and virtual from the
-# `virtual` play, then microk8s from its own.
 - name: Converge
   hosts: all
   become: true
