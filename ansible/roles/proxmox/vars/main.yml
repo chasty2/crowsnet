@@ -10,6 +10,8 @@ proxmox_ports:
   - 8006/tcp # proxmox web app
   - 2049/tcp # nfs
 
+proxmox_nfs_default_options: rw,sync,no_subtree_check
+
 # 770 on this directory restricts access to authorized users, but
 # won't affect permissions of container data within the directory
 proxmox_nfs_mounts:
@@ -19,8 +21,12 @@ proxmox_nfs_mounts:
       group: podman, mode: "0770" }
   - { path: "/ssd_mirror/proxy", owner: podman,
       group: podman, mode: "0770" }
+  # no_root_squash: kube-1's kubelet prepares the subPath mount as root, and a
+  # squashed root cannot traverse these 0770 directories. The pods themselves
+  # still run as the unprivileged podman uid.
   - { path: "/ssd_mirror/foundry", owner: podman,
-      group: podman, mode: "0770" }
+      group: podman, mode: "0770",
+      options: "rw,sync,no_subtree_check,no_root_squash" }
   - { path: "/ssd_mirror/secrets", owner: chasty2,
       group: chasty2, mode: "0770" }
 
