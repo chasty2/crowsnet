@@ -26,7 +26,6 @@
   roles:
     - podman
     - jellyfin
-    - foundry
 
 - name: Development
   hosts: lab
