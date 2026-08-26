@@ -27,13 +27,13 @@
     - podman
     - jellyfin
 
+- name: MicroK8s
+  hosts: kube-1
+  roles:
+    - microk8s
+
 - name: Development
   hosts: lab
   roles:
     - podman
     - dev
-
-- name: MicroK8s
-  hosts: kube-1
-  roles:
-    - microk8s
