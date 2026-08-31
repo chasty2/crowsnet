@@ -7,6 +7,7 @@ from pulumi_proxmoxve import Provider
 
 from components.proxmox import ProxmoxVM
 from foundry import deploy_foundry
+from jellyfin import deploy_jellyfin
 from test_k8s import deploy_test_nginx
 from vms import select_vms
 
@@ -53,6 +54,9 @@ def deploy_k8s() -> None:
         password=config.require_secret("password"),
     )
     pulumi.export("foundry_node_port", foundry_service.spec.ports[0].node_port)
+
+    *_, jellyfin_service = deploy_jellyfin()
+    pulumi.export("jellyfin_node_port", jellyfin_service.spec.ports[0].node_port)
 
 
 stack = pulumi.get_stack()

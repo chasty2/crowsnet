@@ -21,8 +21,8 @@ and heavy compute
 | `abzan` | Physical | GPU/development server |
 | `gate` | VM | Public-facing SSH bastion |
 | `proxy` | VM | Nginx Proxy Manager; terminates HTTP/HTTPS for public services |
-| `bailey` | VM | Web services: Jellyfin and FoundryVTT |
-| `kube-1` | VM | MicroK8s node |
+| `bailey` | VM | Former web services host; idle, pending decommission |
+| `kube-1` | VM | MicroK8s node; runs FoundryVTT and Jellyfin |
 | `lab` | VM | Development sandbox for concurrent Claude code instances |
 | `stage` | VM | Ephemeral VM used only by the integration test suite |
 

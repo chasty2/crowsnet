@@ -29,7 +29,7 @@ def single_container_deployment(
     hostname: str | None = None,
     replicas: int = 1,
     run_as: tuple[int, int] | None = None,
-    mount: ClaimMount | None = None,
+    mounts: Sequence[ClaimMount] = (),
     opts: pulumi.ResourceOptions | None = None,
 ) -> kubernetes.apps.v1.Deployment:
     """Create a Deployment running one hardened container.
@@ -44,7 +44,8 @@ def single_container_deployment(
         hostname: Fixed pod hostname, for images that tie an identity to it.
         replicas: Pod count.
         run_as: (uid, gid) to run as, which also becomes the volume fs group.
-        mount: PersistentVolumeClaim to mount, and where, if any.
+        mounts: PersistentVolumeClaims to mount, and where. The same claim may
+            appear more than once, mounted at a different path or sub_path.
         opts: Pulumi resource options.
 
     Returns:
@@ -73,10 +74,10 @@ def single_container_deployment(
                             image=image,
                             container_port=container_port,
                             env=env,
-                            mount=mount,
+                            mounts=mounts,
                         )
                     ],
-                    volumes=_claim_volumes(mount),
+                    volumes=_claim_volumes(mounts),
                 ),
             ),
         ),
@@ -106,18 +107,17 @@ def _container(
     image: str,
     container_port: int,
     env: Sequence[kubernetes.core.v1.EnvVarArgs] | None,
-    mount: ClaimMount | None,
+    mounts: Sequence[ClaimMount],
 ) -> kubernetes.core.v1.ContainerArgs:
     """Build the container spec, with privileges dropped."""
-    mounts = None
-    if mount:
-        mounts = [
-            kubernetes.core.v1.VolumeMountArgs(
-                name=mount.claim_name,
-                mount_path=mount.mount_path,
-                sub_path=mount.sub_path,
-            )
-        ]
+    volume_mounts = [
+        kubernetes.core.v1.VolumeMountArgs(
+            name=mount.claim_name,
+            mount_path=mount.mount_path,
+            sub_path=mount.sub_path,
+        )
+        for mount in mounts
+    ]
 
     return kubernetes.core.v1.ContainerArgs(
         name=name,
@@ -130,22 +130,29 @@ def _container(
         ports=[
             kubernetes.core.v1.ContainerPortArgs(container_port=container_port)
         ],
-        volume_mounts=mounts,
+        volume_mounts=volume_mounts or None,
     )
 
 
 def _claim_volumes(
-    mount: ClaimMount | None,
+    mounts: Sequence[ClaimMount],
 ) -> list[kubernetes.core.v1.VolumeArgs] | None:
-    """Back the pod's volume with the claim, when the workload has one."""
-    if not mount:
+    """Back the pod's volumes with the claims the container mounts.
+
+    A claim mounted at several paths is still one volume, so names are deduped
+    while keeping the order they were requested in.
+    """
+    if not mounts:
         return None
+
+    claim_names = dict.fromkeys(mount.claim_name for mount in mounts)
 
     return [
         kubernetes.core.v1.VolumeArgs(
-            name=mount.claim_name,
+            name=claim_name,
             persistent_volume_claim=kubernetes.core.v1.PersistentVolumeClaimVolumeSourceArgs(
-                claim_name=mount.claim_name,
+                claim_name=claim_name,
             ),
         )
+        for claim_name in claim_names
     ]
