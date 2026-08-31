@@ -1,9 +1,22 @@
 """Deployments for the single-container workloads the homelab runs."""
 
 from collections.abc import Sequence
+from typing import NamedTuple
 
 import pulumi
 import pulumi_kubernetes as kubernetes
+
+
+class ClaimMount(NamedTuple):
+    """A PersistentVolumeClaim and where the container mounts it.
+
+    Kubernetes has no mount without a path, so the two travel together rather
+    than as separate optional arguments.
+    """
+
+    claim_name: str
+    mount_path: str
+    sub_path: str | None = None
 
 
 def single_container_deployment(
@@ -16,9 +29,7 @@ def single_container_deployment(
     hostname: str | None = None,
     replicas: int = 1,
     run_as: tuple[int, int] | None = None,
-    claim_name: str | None = None,
-    mount_path: str | None = None,
-    sub_path: str | None = None,
+    mount: ClaimMount | None = None,
     opts: pulumi.ResourceOptions | None = None,
 ) -> kubernetes.apps.v1.Deployment:
     """Create a Deployment running one hardened container.
@@ -33,9 +44,7 @@ def single_container_deployment(
         hostname: Fixed pod hostname, for images that tie an identity to it.
         replicas: Pod count.
         run_as: (uid, gid) to run as, which also becomes the volume fs group.
-        claim_name: PersistentVolumeClaim to mount, if any.
-        mount_path: Where to mount that claim in the container.
-        sub_path: Subdirectory of the volume to mount, rather than its root.
+        mount: PersistentVolumeClaim to mount, and where, if any.
         opts: Pulumi resource options.
 
     Returns:
@@ -64,12 +73,10 @@ def single_container_deployment(
                             image=image,
                             container_port=container_port,
                             env=env,
-                            claim_name=claim_name,
-                            mount_path=mount_path,
-                            sub_path=sub_path,
+                            mount=mount,
                         )
                     ],
-                    volumes=_claim_volumes(claim_name),
+                    volumes=_claim_volumes(mount),
                 ),
             ),
         ),
@@ -99,18 +106,16 @@ def _container(
     image: str,
     container_port: int,
     env: Sequence[kubernetes.core.v1.EnvVarArgs] | None,
-    claim_name: str | None,
-    mount_path: str | None,
-    sub_path: str | None,
+    mount: ClaimMount | None,
 ) -> kubernetes.core.v1.ContainerArgs:
     """Build the container spec, with privileges dropped."""
     mounts = None
-    if claim_name:
+    if mount:
         mounts = [
             kubernetes.core.v1.VolumeMountArgs(
-                name=claim_name,
-                mount_path=mount_path,
-                sub_path=sub_path,
+                name=mount.claim_name,
+                mount_path=mount.mount_path,
+                sub_path=mount.sub_path,
             )
         ]
 
@@ -130,17 +135,17 @@ def _container(
 
 
 def _claim_volumes(
-    claim_name: str | None,
+    mount: ClaimMount | None,
 ) -> list[kubernetes.core.v1.VolumeArgs] | None:
     """Back the pod's volume with the claim, when the workload has one."""
-    if not claim_name:
+    if not mount:
         return None
 
     return [
         kubernetes.core.v1.VolumeArgs(
-            name=claim_name,
+            name=mount.claim_name,
             persistent_volume_claim=kubernetes.core.v1.PersistentVolumeClaimVolumeSourceArgs(
-                claim_name=claim_name,
+                claim_name=mount.claim_name,
             ),
         )
     ]

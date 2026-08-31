@@ -18,6 +18,7 @@ class _Mocks(pulumi.runtime.Mocks):
 pulumi.runtime.set_mocks(_Mocks())
 
 from components.kubernetes.deployment import (  # noqa: E402  (must follow set_mocks)
+    ClaimMount,
     single_container_deployment,
 )
 from components.kubernetes.namespace import restricted_namespace  # noqa: E402
@@ -158,9 +159,11 @@ def test_deployment_without_a_run_as_leaves_the_uid_to_the_image():
 @pulumi.runtime.test
 def test_deployment_mounts_the_claim_at_the_requested_subdirectory():
     deployment = _deployment(
-        claim_name="demo-data",
-        mount_path="/data",
-        sub_path="worlds",
+        mount=ClaimMount(
+            claim_name="demo-data",
+            mount_path="/data",
+            sub_path="worlds",
+        )
     )
 
     def check(spec):

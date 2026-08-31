@@ -12,7 +12,7 @@ than read from config here.
 import pulumi
 import pulumi_kubernetes as kubernetes
 
-from components.kubernetes.deployment import single_container_deployment
+from components.kubernetes.deployment import ClaimMount, single_container_deployment
 from components.kubernetes.namespace import restricted_namespace
 from components.kubernetes.persistent_volume import nfs_volume
 from components.kubernetes.persistent_volume_claim import volume_claim
@@ -98,10 +98,12 @@ def deploy_foundry(username: pulumi.Input[str], password: pulumi.Input[str]):
         # license needs re-confirming
         hostname=APP_NAME,
         run_as=(PODMAN_UID, PODMAN_GID),
-        claim_name=VOLUME_NAME,
-        mount_path="/data",
-        # Mount only the subdirectory the container owns.
-        sub_path=DATA_SUBPATH,
+        mount=ClaimMount(
+            claim_name=VOLUME_NAME,
+            mount_path="/data",
+            # Mount only the subdirectory the container owns.
+            sub_path=DATA_SUBPATH,
+        ),
         opts=pulumi.ResourceOptions(parent=namespace, depends_on=[claim, secret]),
     )
 
