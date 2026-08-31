@@ -98,12 +98,14 @@ def deploy_foundry(username: pulumi.Input[str], password: pulumi.Input[str]):
         # license needs re-confirming
         hostname=APP_NAME,
         run_as=(PODMAN_UID, PODMAN_GID),
-        mount=ClaimMount(
-            claim_name=VOLUME_NAME,
-            mount_path="/data",
-            # Mount only the subdirectory the container owns.
-            sub_path=DATA_SUBPATH,
-        ),
+        mounts=[
+            ClaimMount(
+                claim_name=VOLUME_NAME,
+                mount_path="/data",
+                # Mount only the subdirectory the container owns.
+                sub_path=DATA_SUBPATH,
+            )
+        ],
         opts=pulumi.ResourceOptions(parent=namespace, depends_on=[claim, secret]),
     )
 

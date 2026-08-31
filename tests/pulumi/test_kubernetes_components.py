@@ -159,11 +159,13 @@ def test_deployment_without_a_run_as_leaves_the_uid_to_the_image():
 @pulumi.runtime.test
 def test_deployment_mounts_the_claim_at_the_requested_subdirectory():
     deployment = _deployment(
-        mount=ClaimMount(
-            claim_name="demo-data",
-            mount_path="/data",
-            sub_path="worlds",
-        )
+        mounts=[
+            ClaimMount(
+                claim_name="demo-data",
+                mount_path="/data",
+                sub_path="worlds",
+            )
+        ]
     )
 
     def check(spec):
@@ -173,6 +175,33 @@ def test_deployment_mounts_the_claim_at_the_requested_subdirectory():
         assert mount["mount_path"] == "/data"
         assert mount["sub_path"] == "worlds"
         assert pod["volumes"][0]["persistent_volume_claim"]["claim_name"] == "demo-data"
+
+    return deployment.spec.apply(check)
+
+
+@pulumi.runtime.test
+def test_deployment_mounts_one_claim_at_several_paths_as_a_single_volume():
+    deployment = _deployment(
+        mounts=[
+            ClaimMount("demo-data", mount_path="/config", sub_path="config"),
+            ClaimMount("demo-data", mount_path="/cache", sub_path="cache"),
+            ClaimMount("demo-media", mount_path="/media"),
+        ]
+    )
+
+    def check(spec):
+        pod = spec["template"]["spec"]
+        mounts = pod["containers"][0]["volume_mounts"]
+        assert [(m["mount_path"], m.get("sub_path")) for m in mounts] == [
+            ("/config", "config"),
+            ("/cache", "cache"),
+            ("/media", None),
+        ]
+        # A claim mounted twice is still one volume; duplicate names are rejected.
+        assert [volume["name"] for volume in pod["volumes"]] == [
+            "demo-data",
+            "demo-media",
+        ]
 
     return deployment.spec.apply(check)
 
