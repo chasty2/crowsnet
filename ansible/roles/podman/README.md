@@ -1,8 +1,8 @@
 # Podman Role
 
 Installs Podman and prepares the `podman` service account to run rootless containers.
-Every application role that ships a container (`proxy`, `jellyfin`, `foundry`) depends on
-this role running first.
+Every application role that ships a container (`proxy`) depends on this role running
+first.
 
 ## Requirements
 - `common` role (creates the `podman` user and group)
