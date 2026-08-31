@@ -87,8 +87,6 @@ def _pod_security_context(
         run_as_user=uid,
         run_as_group=gid,
         fs_group=gid,
-        # NFS exports are squashed, so kubelet's recursive chown of the whole
-        # volume would fail. The data already carries the right ownership.
         fs_group_change_policy="OnRootMismatch" if gid is not None else None,
         seccomp_profile=kubernetes.core.v1.SeccompProfileArgs(
             type="RuntimeDefault",
