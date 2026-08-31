@@ -12,6 +12,12 @@ than read from config here.
 import pulumi
 import pulumi_kubernetes as kubernetes
 
+from components.kubernetes.deployment import single_container_deployment
+from components.kubernetes.namespace import restricted_namespace
+from components.kubernetes.persistent_volume import nfs_volume
+from components.kubernetes.persistent_volume_claim import volume_claim
+from components.kubernetes.service import node_port_service
+
 APP_NAME = "foundry"
 APP_LABELS = {"app": APP_NAME}
 NAMESPACE = "foundry"
@@ -55,20 +61,7 @@ def deploy_foundry(username: pulumi.Input[str], password: pulumi.Input[str]):
     Returns:
         A (namespace, secret, volume, claim, deployment, service) tuple.
     """
-    namespace = kubernetes.core.v1.Namespace(
-        NAMESPACE,
-        metadata=kubernetes.meta.v1.ObjectMetaArgs(
-            name=NAMESPACE,
-            labels={
-                # Pod Security Admission is namespace labels, not RBAC. The pod
-                # never calls the API server, so it needs no Role binding.
-                "pod-security.kubernetes.io/enforce": "restricted",
-                "pod-security.kubernetes.io/enforce-version": "latest",
-                "pod-security.kubernetes.io/audit": "restricted",
-                "pod-security.kubernetes.io/warn": "restricted",
-            },
-        ),
-    )
+    namespace = restricted_namespace(NAMESPACE)
 
     child = pulumi.ResourceOptions(parent=namespace)
 
@@ -85,137 +78,51 @@ def deploy_foundry(username: pulumi.Input[str], password: pulumi.Input[str]):
         opts=child,
     )
 
-    volume = kubernetes.core.v1.PersistentVolume(
+    volume = nfs_volume(
         VOLUME_NAME,
-        metadata=kubernetes.meta.v1.ObjectMetaArgs(
-            name=VOLUME_NAME,
-            labels=APP_LABELS,
-        ),
-        spec=kubernetes.core.v1.PersistentVolumeSpecArgs(
-            capacity={"storage": STORAGE_SIZE},
-            access_modes=["ReadWriteOnce"],
-            # The data outlives the cluster: never reclaim it.
-            persistent_volume_reclaim_policy="Retain",
-            storage_class_name=STORAGE_CLASS,
-            mount_options=["hard"],
-            nfs=kubernetes.core.v1.NFSVolumeSourceArgs(
-                server=NFS_SERVER,
-                path=NFS_PATH,
-            ),
-        ),
+        server=NFS_SERVER,
+        path=NFS_PATH,
+        size=STORAGE_SIZE,
+        storage_class=STORAGE_CLASS,
+        labels=APP_LABELS,
     )
 
-    claim = kubernetes.core.v1.PersistentVolumeClaim(
+    claim = volume_claim(
         VOLUME_NAME,
-        metadata=kubernetes.meta.v1.ObjectMetaArgs(
-            name=VOLUME_NAME,
-            namespace=NAMESPACE,
-        ),
-        spec=kubernetes.core.v1.PersistentVolumeClaimSpecArgs(
-            access_modes=["ReadWriteOnce"],
-            storage_class_name=STORAGE_CLASS,
-            resources=kubernetes.core.v1.VolumeResourceRequirementsArgs(
-                requests={"storage": STORAGE_SIZE},
-            ),
-        ),
+        namespace=NAMESPACE,
+        size=STORAGE_SIZE,
+        storage_class=STORAGE_CLASS,
         opts=pulumi.ResourceOptions(parent=namespace, depends_on=[volume]),
     )
 
-    deployment = kubernetes.apps.v1.Deployment(
+    deployment = single_container_deployment(
         APP_NAME,
-        metadata=kubernetes.meta.v1.ObjectMetaArgs(
-            name=APP_NAME,
-            namespace=NAMESPACE,
-            labels=APP_LABELS,
-        ),
-        spec=kubernetes.apps.v1.DeploymentSpecArgs(
-            replicas=1,
-            selector=kubernetes.meta.v1.LabelSelectorArgs(
-                match_labels=APP_LABELS,
-            ),
-            template=kubernetes.core.v1.PodTemplateSpecArgs(
-                metadata=kubernetes.meta.v1.ObjectMetaArgs(
-                    labels=APP_LABELS,
-                ),
-                spec=kubernetes.core.v1.PodSpecArgs(
-                    # Foundry binds its license signature to the host identity.
-                    # Without a fixed hostname every replacement pod arrives as
-                    # a new install and the license needs re-confirming, so pin
-                    # it the way the podman container used to.
-                    hostname=APP_NAME,
-                    automount_service_account_token=False,
-                    security_context=kubernetes.core.v1.PodSecurityContextArgs(
-                        run_as_non_root=True,
-                        run_as_user=PODMAN_UID,
-                        run_as_group=PODMAN_GID,
-                        fs_group=PODMAN_GID,
-                        # The data is already podman-owned, so skip kubelet's
-                        # recursive chown over the whole NFS export.
-                        fs_group_change_policy="OnRootMismatch",
-                        seccomp_profile=kubernetes.core.v1.SeccompProfileArgs(
-                            type="RuntimeDefault",
-                        ),
-                    ),
-                    containers=[
-                        kubernetes.core.v1.ContainerArgs(
-                            name=APP_NAME,
-                            image=IMAGE,
-                            security_context=kubernetes.core.v1.SecurityContextArgs(
-                                allow_privilege_escalation=False,
-                                capabilities=kubernetes.core.v1.CapabilitiesArgs(
-                                    drop=["ALL"],
-                                ),
-                            ),
-                            env=_container_env(),
-                            ports=[
-                                kubernetes.core.v1.ContainerPortArgs(
-                                    container_port=CONTAINER_PORT,
-                                )
-                            ],
-                            volume_mounts=[
-                                kubernetes.core.v1.VolumeMountArgs(
-                                    name=VOLUME_NAME,
-                                    mount_path="/data",
-                                    # The export root holds more than the world
-                                    # data; mount only the subdirectory the
-                                    # container owns.
-                                    sub_path=DATA_SUBPATH,
-                                )
-                            ],
-                        )
-                    ],
-                    volumes=[
-                        kubernetes.core.v1.VolumeArgs(
-                            name=VOLUME_NAME,
-                            persistent_volume_claim=kubernetes.core.v1.PersistentVolumeClaimVolumeSourceArgs(
-                                claim_name=VOLUME_NAME,
-                            ),
-                        )
-                    ],
-                ),
-            ),
-        ),
+        namespace=NAMESPACE,
+        image=IMAGE,
+        labels=APP_LABELS,
+        container_port=CONTAINER_PORT,
+        env=_container_env(),
+        # Foundry binds its license signature to the host identity. Without a
+        # fixed hostname every replacement pod arrives as a new install and the
+        # license needs re-confirming, so pin it the way the podman container
+        # used to.
+        hostname=APP_NAME,
+        run_as=(PODMAN_UID, PODMAN_GID),
+        claim_name=VOLUME_NAME,
+        mount_path="/data",
+        # The export root holds more than the world data; mount only the
+        # subdirectory the container owns.
+        sub_path=DATA_SUBPATH,
         opts=pulumi.ResourceOptions(parent=namespace, depends_on=[claim, secret]),
     )
 
-    service = kubernetes.core.v1.Service(
+    service = node_port_service(
         APP_NAME,
-        metadata=kubernetes.meta.v1.ObjectMetaArgs(
-            name=APP_NAME,
-            namespace=NAMESPACE,
-            labels=APP_LABELS,
-        ),
-        spec=kubernetes.core.v1.ServiceSpecArgs(
-            type="NodePort",
-            selector=APP_LABELS,
-            ports=[
-                kubernetes.core.v1.ServicePortArgs(
-                    port=CONTAINER_PORT,
-                    target_port=CONTAINER_PORT,
-                    node_port=NODE_PORT,
-                )
-            ],
-        ),
+        namespace=NAMESPACE,
+        selector=APP_LABELS,
+        port=CONTAINER_PORT,
+        node_port=NODE_PORT,
+        labels=APP_LABELS,
         opts=child,
     )
 
