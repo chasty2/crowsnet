@@ -21,11 +21,13 @@
     - podman
     - proxy
 
-- name: Web Services
-  hosts: bailey
-  roles:
-    - podman
-    - jellyfin
+# bailey served jellyfin and foundry, both of which now run on the k8s cluster.
+# The VM is decommissioned in a follow-up change
+# - name: Web Services
+#   hosts: bailey
+#   roles:
+#     - podman
+#     - jellyfin
 
 - name: MicroK8s
   hosts: kube-1

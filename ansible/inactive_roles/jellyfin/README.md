@@ -1,5 +1,7 @@
 # Jellyfin Role
 
+> **Retired.** Jellyfin now runs on the MicroK8s cluster. Kept here for reference only.
+
 Runs [Jellyfin](https://jellyfin.org/) as a rootless Podman container on `bailey`. The
 media library and the server's cache and config directories are NFS mounts from the
 hypervisor, so container data outlives the VM.
