@@ -3,8 +3,6 @@
 import pulumi
 import pulumi_kubernetes as kubernetes
 
-# Pod Security Admission is driven by namespace labels, not RBAC, so a workload
-# that never calls the API server still needs these to be sandboxed.
 RESTRICTED_PSA_LABELS = {
     "pod-security.kubernetes.io/enforce": "restricted",
     "pod-security.kubernetes.io/enforce-version": "latest",

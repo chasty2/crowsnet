@@ -21,18 +21,11 @@ from components.kubernetes.service import node_port_service
 APP_NAME = "foundry"
 APP_LABELS = {"app": APP_NAME}
 NAMESPACE = "foundry"
-# Pinned: Foundry licenses are tied to a major version, so a floating tag can
-# silently upgrade the cluster into an unlicensed state.
 IMAGE = "docker.io/felddy/foundryvtt:14.367.0"
 CONTAINER_PORT = 30000
 NODE_PORT = 30000
-
-# The `podman` service account, as created by the common role. Running as this
-# uid/gid is the Kubernetes equivalent of the rootless `userns: keep-id` setup
-# the container used under Podman.
 PODMAN_UID = 2004
 PODMAN_GID = 2004
-
 NFS_SERVER = "192.168.4.11"
 NFS_PATH = "/ssd_mirror/foundry"
 DATA_SUBPATH = "data"
@@ -42,8 +35,6 @@ VOLUME_NAME = "foundry-data"
 # this PVC, and to keep a dynamic provisioner from answering the claim instead.
 STORAGE_CLASS = "nfs-foundry"
 STORAGE_SIZE = "50Gi"
-
-# The felddy image fetches the licensed build with these credentials on boot.
 CONTAINER_ENV = {
     "FOUNDRY_PROTOCOL": "4",
     "CONTAINER_CACHE_SIZE": "3",
@@ -104,14 +95,12 @@ def deploy_foundry(username: pulumi.Input[str], password: pulumi.Input[str]):
         env=_container_env(),
         # Foundry binds its license signature to the host identity. Without a
         # fixed hostname every replacement pod arrives as a new install and the
-        # license needs re-confirming, so pin it the way the podman container
-        # used to.
+        # license needs re-confirming
         hostname=APP_NAME,
         run_as=(PODMAN_UID, PODMAN_GID),
         claim_name=VOLUME_NAME,
         mount_path="/data",
-        # The export root holds more than the world data; mount only the
-        # subdirectory the container owns.
+        # Mount only the subdirectory the container owns.
         sub_path=DATA_SUBPATH,
         opts=pulumi.ResourceOptions(parent=namespace, depends_on=[claim, secret]),
     )

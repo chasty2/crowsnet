@@ -23,10 +23,6 @@ def single_container_deployment(
 ) -> kubernetes.apps.v1.Deployment:
     """Create a Deployment running one hardened container.
 
-    The container drops every capability, cannot escalate privileges, and gets
-    no service account token, which is what the restricted Pod Security
-    Standard demands of anything in a namespace built by `restricted_namespace`.
-
     Args:
         name: Workload name, used as the Pulumi resource name too.
         namespace: Namespace to deploy into.
