@@ -52,11 +52,13 @@ The suite has two layers (a third, CI on a self-hosted runner, is still pending)
 ```
 crowsnet/
 ├── ansible/            # Configures servers and containers
-├── pulumi/             # Infrastructure provisioning (Proxmox VMs)
+├── pulumi/             # Infrastructure and workload provisioning
+│   ├── apps/           # What gets deployed (VMs, Foundry, Jellyfin)
+│   └── components/     # Reusable Proxmox and Kubernetes building blocks
 ├── docker/             # Container definitions
 │   ├── Dockerfile      # Unified CrowsNet container (Ansible + Pulumi)
 │   └── entrypoint.sh   # Action dispatcher (configure, deploy, etc.)
-├── utilities/          # Python utilities for container operations
+├── utils/              # Python utilities for container operations
 ├── tests/              # Host-side pytest unit tests (CLI, container, Pulumi)
 └── crowsnet.py         # CLI entry point for all operations
 ```
