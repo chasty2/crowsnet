@@ -62,7 +62,7 @@ actually built:
 
 ```
 molecule/
-├── shared/           # create.yml, prepare.yml, destroy.yml — written once
+├── shared/           # create.yml, destroy.yml — written once
 └── <host>/
     ├── molecule.yml  # scenario config
     ├── converge.yml  # applies the host's roles
@@ -78,14 +78,17 @@ roles/<role>/tests/
 roles predate this layout and still carry role-scoped
 `roles/<role>/molecule/default/` scenarios; fold them in rather than adding more.
 
-The lifecycle playbooks (`create`, `prepare`, `destroy`) live **once** in
+The lifecycle playbooks (`create`, `destroy`) live **once** in
 `molecule/shared/` — do **not** reimplement them per scenario. Molecule runs from
 `ansible/`, so `MOLECULE_PROJECT_DIRECTORY` is that directory and every path is
 written relative to it.
 
+There is no `prepare` step: `create.yml` waits for SSH, and the apt cache is
+refreshed by the `common` role, which every scenario converges first.
+
 **`molecule.yml`** — `driver: default`; one platform named `stage`; a galaxy
 dependency pointing at the roles requirements; `provisioner.playbooks` wiring the
-three shared playbooks; `ANSIBLE_ROLES_PATH` set to the roles directory; and
+two shared playbooks; `ANSIBLE_ROLES_PATH` set to the roles directory; and
 `verifier: ansible`:
 ```yaml
 ---
@@ -104,7 +107,6 @@ provisioner:
   name: ansible
   playbooks:
     create: ${MOLECULE_PROJECT_DIRECTORY}/molecule/shared/create.yml
-    prepare: ${MOLECULE_PROJECT_DIRECTORY}/molecule/shared/prepare.yml
     destroy: ${MOLECULE_PROJECT_DIRECTORY}/molecule/shared/destroy.yml
   env:
     ANSIBLE_HOST_KEY_CHECKING: "false"
