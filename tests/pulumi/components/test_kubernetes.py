@@ -1,7 +1,7 @@
 """Tests for the reusable components in pulumi/components/kubernetes/.
 
 These cover the defaults the components carry on their own. What Foundry does
-with them is covered by tests/pulumi/test_foundry.py.
+with them is covered by tests/pulumi/apps/test_foundry.py.
 """
 
 import pulumi

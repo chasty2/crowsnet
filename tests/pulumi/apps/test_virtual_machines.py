@@ -1,8 +1,8 @@
-"""Tests for stack -> VM selection in pulumi/vms.py."""
+"""Tests for stack -> VM selection in pulumi/apps/virtual_machines.py."""
 
 import pytest
 
-import vms
+from apps import virtual_machines as vms
 
 
 def test_select_stage_returns_stage_vms():

@@ -8,7 +8,7 @@ keys, and the Ansible collections configured.
 
 import subprocess
 
-from utilities.container import run_container
+from utils.container import run_container
 
 
 def run_pytest() -> int:

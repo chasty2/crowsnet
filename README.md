@@ -48,7 +48,7 @@ mounted into the container at run time
 
 ## Provisioning (Pulumi)
 
-VM definitions live in [`pulumi/vms.py`](pulumi/vms.py). VM's use MAC-associated fixed
+VM definitions live in [`pulumi/apps/virtual_machines.py`](pulumi/apps/virtual_machines.py). VM's use MAC-associated fixed
 IP addresses that are assigned via DHCP. The stack name selects what gets deployed —
 `k8s` deploys workloads onto the MicroK8s cluster, every other stack deploys VM's:
 

@@ -5,10 +5,10 @@ Provision CrowsNet infrastructure for the selected Pulumi stack.
 import pulumi
 from pulumi_proxmoxve import Provider
 
-from components.proxmox import ProxmoxVM
-from foundry import deploy_foundry
-from jellyfin import deploy_jellyfin
-from vms import select_vms
+from apps.foundry import deploy_foundry
+from apps.jellyfin import deploy_jellyfin
+from apps.virtual_machines import select_vms
+from components.proxmox.virtual_machine import ProxmoxVM
 
 
 def deploy_proxmox_vms(stack: str) -> None:

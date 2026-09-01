@@ -1,8 +1,8 @@
-"""Tests for the podman command construction in utilities/container.py."""
+"""Tests for the podman command construction in utils/container.py."""
 
 from types import SimpleNamespace
 
-from utilities import container
+from utils import container
 
 
 def _fake_run(returncode=0, recorder=None):
