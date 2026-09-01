@@ -1,4 +1,4 @@
-"""Tests for the Jellyfin workload in pulumi/jellyfin.py."""
+"""Tests for the Jellyfin workload in pulumi/apps/jellyfin.py."""
 
 import pulumi
 
@@ -13,7 +13,7 @@ class _Mocks(pulumi.runtime.Mocks):
 
 pulumi.runtime.set_mocks(_Mocks())
 
-from jellyfin import (  # noqa: E402  (must follow set_mocks)
+from apps.jellyfin import (  # noqa: E402  (must follow set_mocks)
     APP_LABELS,
     CONTAINER_PORT,
     DATA_STORAGE_CLASS,

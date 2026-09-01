@@ -1,4 +1,4 @@
-"""Tests for the Foundry workload in pulumi/foundry.py."""
+"""Tests for the Foundry workload in pulumi/apps/foundry.py."""
 
 import pulumi
 
@@ -13,7 +13,7 @@ class _Mocks(pulumi.runtime.Mocks):
 
 pulumi.runtime.set_mocks(_Mocks())
 
-from foundry import (  # noqa: E402  (must follow set_mocks)
+from apps.foundry import (  # noqa: E402  (must follow set_mocks)
     APP_LABELS,
     IMAGE,
     NAMESPACE,

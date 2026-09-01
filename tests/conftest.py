@@ -11,7 +11,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 # The pulumi/ directory is a Pulumi program, not an installable package, and its
-# modules import each other by bare name (e.g. `from components import ...`).
+# modules import each other relative to it (e.g. `from apps.foundry import ...`).
 # Add it to sys.path so the unit tests can import those modules directly.
 if str(PULUMI_DIR) not in sys.path:
     sys.path.insert(0, str(PULUMI_DIR))
