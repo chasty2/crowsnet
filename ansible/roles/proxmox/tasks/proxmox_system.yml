@@ -1,0 +1,14 @@
+---
+# System-level configuration for proxmox role
+- name: System Config Block
+  become: true
+  tags: system
+  block:
+    - name: Bound the ZFS ARC
+      ansible.builtin.template:
+        dest: /etc/modprobe.d/zfs.conf
+        src: zfs_arc.j2
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Update initramfs

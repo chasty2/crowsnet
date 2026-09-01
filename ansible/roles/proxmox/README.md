@@ -1,8 +1,11 @@
 # Proxmox Role
 
 Configures the Proxmox VE hypervisor (`esper`): exports the ZFS datasets that hold
-container data over NFS, and schedules backups of those datasets to the Proxmox Backup
-Server.
+container data over NFS, schedules backups of those datasets to the Proxmox Backup
+Server, and bounds the ZFS ARC so the cache leaves RAM for the VMs.
+
+The ARC bounds are written to `/etc/modprobe.d/zfs.conf` and the initramfs is rebuilt,
+so they take effect on the host's **next boot**.
 
 ## Requirements
 - `common` role (firewalld)
@@ -15,6 +18,8 @@ Server.
 - `proxmox_packages` - Packages to install (`nfs-kernel-server`)
 - `proxmox_services` - Services started and enabled on boot
 - `proxmox_ports` - firewalld ports on the `internal` zone (`8006/tcp` web UI, `2049/tcp` NFS)
+- `proxmox_zfs_arc_min` - Lower bound on the ZFS ARC, in bytes
+- `proxmox_zfs_arc_max` - Upper bound on the ZFS ARC, in bytes
 - `proxmox_nfs_mounts` - Exported directories, as
   `{ path: "/mount/path", owner: remote_user, group: nfs_group, mode: "0770" }`
 - `proxmox_cron_jobs` - Backup and pool-maintenance jobs, as
