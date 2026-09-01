@@ -14,17 +14,8 @@ RUN groupadd -r ansible && useradd -r -g ansible -m ansible \
     && chmod 0700 /home/ansible/.ssh
 
 # Copy SSH private keys
-COPY ./ssh-keys/ansible_ed25519 /home/ansible/.ssh/id_ed25519
-COPY ./ssh-keys/azure_id_rsa /home/ansible/.ssh/id_rsa
-COPY ./ssh-keys/chasty2_ed25519 /home/ansible/.ssh/chasty2_id_ed25519
-
-# Set SSH key permissions
-RUN chown ansible:ansible /home/ansible/.ssh/id_ed25519 \
-    && chmod 600 /home/ansible/.ssh/id_ed25519 \
-    && chown ansible:ansible /home/ansible/.ssh/id_rsa \
-    && chmod 600 /home/ansible/.ssh/id_rsa \
-    && chown ansible:ansible /home/ansible/.ssh/chasty2_id_ed25519 \
-    && chmod 600 /home/ansible/.ssh/chasty2_id_ed25519
+COPY --chown=ansible:ansible --chmod=600 ./ssh-keys/ansible_ed25519 /home/ansible/.ssh/id_ed25519
+COPY --chown=ansible:ansible --chmod=600 ./ssh-keys/chasty2_ed25519 /home/ansible/.ssh/chasty2_id_ed25519
 
 # Switch to ansible user
 USER ansible
