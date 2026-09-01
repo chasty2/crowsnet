@@ -10,6 +10,10 @@ proxmox_ports:
   - 8006/tcp # proxmox web app
   - 2049/tcp # nfs
 
+# ZFS ARC bounds in bytes; caps the hypervisor cache so it leaves RAM for the VMs
+proxmox_zfs_arc_min: "{{ 4 * 1024**3 }}" # 4 GiB
+proxmox_zfs_arc_max: "{{ 16 * 1024**3 }}" # 16 GiB
+
 # 770 on this directory restricts access to authorized users, but
 # won't affect permissions of container data within the directory
 proxmox_nfs_mounts:
