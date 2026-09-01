@@ -1,8 +1,8 @@
-"""Tests for the test-runner helpers in utilities/testing.py."""
+"""Tests for the test-runner helpers in utils/testing.py."""
 
 from types import SimpleNamespace
 
-from utilities import testing
+from utils import testing
 
 
 def _fake_run(returncode=0, recorder=None):

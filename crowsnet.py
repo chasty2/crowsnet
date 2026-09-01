@@ -3,8 +3,8 @@
 
 import sys
 import click
-from utilities.container import build_container, run_container
-from utilities.testing import run_integration, run_pytest
+from utils.container import build_container, run_container
+from utils.testing import run_integration, run_pytest
 
 
 @click.group()
