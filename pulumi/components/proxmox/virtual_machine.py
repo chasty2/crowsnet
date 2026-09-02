@@ -53,7 +53,6 @@ class ProxmoxVM(pulumi.ComponentResource):
                     interface="scsi0",
                     datastore_id="ssd_mirror",
                     size=tmpl["disk_size"],
-                    file_format="qcow2",
                 )
             ],
             cdrom=proxmox.vm.VirtualMachineCdromArgs(
