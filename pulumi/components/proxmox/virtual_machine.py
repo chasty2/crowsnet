@@ -57,7 +57,7 @@ class ProxmoxVM(pulumi.ComponentResource):
             ],
             cdrom=proxmox.vm.VirtualMachineCdromArgs(
                 file_id="none",
-                interface="ide2",
+                interface="ide3",
             ),
             network_devices=[
                 proxmox.vm.VirtualMachineNetworkDeviceArgs(
@@ -71,6 +71,7 @@ class ProxmoxVM(pulumi.ComponentResource):
             initialization=proxmox.vm.VirtualMachineInitializationArgs(
                 type="nocloud",
                 datastore_id="ssd_mirror",
+                interface="ide2",
                 ip_configs=[
                     proxmox.vm.VirtualMachineInitializationIpConfigArgs(
                         ipv4=proxmox.vm.VirtualMachineInitializationIpConfigIpv4Args(
