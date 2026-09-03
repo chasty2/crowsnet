@@ -19,5 +19,21 @@
       ansible.builtin.apt:
         autoclean: true
 
+    - name: Stop microk8s before reboot
+      ansible.builtin.command: microk8s stop
+      changed_when: true
+      when: inventory_hostname == microk8s_node
+
     - name: Reboot
       ansible.builtin.reboot:
+
+    - name: Restore microk8s after reboot
+      when: inventory_hostname == microk8s_node
+      block:
+        - name: Start microk8s
+          ansible.builtin.command: microk8s start
+          changed_when: true
+
+        - name: Wait for microk8s to become ready
+          ansible.builtin.command: microk8s status --wait-ready --timeout 300
+          changed_when: false
