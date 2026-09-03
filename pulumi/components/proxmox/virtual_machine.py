@@ -53,12 +53,11 @@ class ProxmoxVM(pulumi.ComponentResource):
                     interface="scsi0",
                     datastore_id="ssd_mirror",
                     size=tmpl["disk_size"],
-                    file_format="qcow2",
                 )
             ],
             cdrom=proxmox.vm.VirtualMachineCdromArgs(
                 file_id="none",
-                interface="ide2",
+                interface="ide3",
             ),
             network_devices=[
                 proxmox.vm.VirtualMachineNetworkDeviceArgs(
@@ -72,6 +71,7 @@ class ProxmoxVM(pulumi.ComponentResource):
             initialization=proxmox.vm.VirtualMachineInitializationArgs(
                 type="nocloud",
                 datastore_id="ssd_mirror",
+                interface="ide2",
                 ip_configs=[
                     proxmox.vm.VirtualMachineInitializationIpConfigArgs(
                         ipv4=proxmox.vm.VirtualMachineInitializationIpConfigIpv4Args(

@@ -56,6 +56,34 @@ def test_large_template_disk_and_clone_source():
 
 
 @pulumi.runtime.test
+def test_disk_leaves_file_format_to_the_datastore():
+    """ssd_mirror is a ZFS pool, so its zvols are always raw. Declaring a format
+    the provider cannot apply produces permanent drift."""
+    vm = _make()
+
+    def check(disks):
+        assert disks[0]["datastore_id"] == "ssd_mirror"
+        assert "file_format" not in disks[0]
+
+    return vm.vm.disks.apply(check)
+
+
+@pulumi.runtime.test
+def test_cdrom_leaves_ide2_to_cloud_init():
+    """The provider places the cloud-init drive on ide2; a cdrom parked there
+    evicts it, leaving the VM with no cloud-init drive."""
+    vm = _make()
+
+    def check(args):
+        cdrom, initialization = args
+        assert cdrom["interface"] == "ide3"
+        assert initialization["interface"] == "ide2"
+        assert initialization["datastore_id"] == "ssd_mirror"
+
+    return pulumi.Output.all(vm.vm.cdrom, vm.vm.initialization).apply(check)
+
+
+@pulumi.runtime.test
 def test_clone_flag_controls_full_clone():
     vm = _make(clone=False)
 
